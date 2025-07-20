@@ -206,7 +206,9 @@ ordenar_encuestados(personas)
 print("\n")
 print("Lista de Temas ordenada")
 ordenar_temas(temas, personas)
-
+opiniones = [6, 7, 7, 3, 3]
+print("moda de las opiniones:")
+print(moda(opiniones))
 """
 Dado que los valores de cada encuetado son una tupla,
 se puede acceder a ellos como encuestados[1][0] para el nombre, 

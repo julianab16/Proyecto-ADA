@@ -126,6 +126,45 @@ class ArbolRojoNegro:
             resultado.append(nodo.id)
             self.recorrido_inorden(nodo.izq, resultado)
 
+    # Recorre el árbol y extrae todas las opiniones en una lista
+def recolectar_opiniones(nodo, NIL, opiniones):
+    if nodo != NIL:
+        recolectar_opiniones(nodo.izq, NIL, opiniones)
+        if nodo.opinion is not None:
+            opiniones.append(nodo.opinion)
+        recolectar_opiniones(nodo.der, NIL, opiniones)
+
+# Calcula la moda de una lista, devolviendo la menor si hay empate
+def calcular_moda_lista(lista):
+    frecuencias = {}
+
+    for valor in lista:
+        if valor in frecuencias:
+            frecuencias[valor] += 1
+        else:
+            frecuencias[valor] = 1
+
+    max_frecuencia = 0
+    posibles_modas = []
+
+    for valor in frecuencias:
+        if frecuencias[valor] > max_frecuencia:
+            max_frecuencia = frecuencias[valor]
+            posibles_modas = [valor]
+        elif frecuencias[valor] == max_frecuencia:
+            posibles_modas.append(valor)
+
+    return min(posibles_modas)
+
+# Función principal: calcula la moda del árbol Rojo-Negro
+def calcular_moda_arbol(arbol_rb):
+    opiniones = []
+    recolectar_opiniones(arbol_rb.raiz, arbol_rb.NIL, opiniones)
+    if not opiniones:
+        return None  # Si no hay datos
+    return calcular_moda_lista(opiniones)
+
+
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
@@ -152,6 +191,9 @@ if __name__ == "__main__":
     arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
+    moda_opinion = calcular_moda_arbol(arbol)
+    print(f"Moda de opiniones en el árbol: {moda_opinion}")
+
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 
