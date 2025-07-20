@@ -101,6 +101,30 @@ def insertionsort_preguntas(arr):
         arr[j+1][0] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
 
+def moda(lista):
+    # Creamos un diccionario de frecuencias
+    frecuencias = {}
+    
+    for valor in lista:
+        if valor in frecuencias:
+            frecuencias[valor] += 1
+        else:
+            frecuencias[valor] = 1
+
+    # Buscamos el valor de mayor frecuencia
+    max_frecuencia = 0
+    posibles_modas = []
+
+    for valor in frecuencias:
+        if frecuencias[valor] > max_frecuencia:
+            max_frecuencia = frecuencias[valor]
+            posibles_modas = [valor]
+        elif frecuencias[valor] == max_frecuencia:
+            posibles_modas.append(valor)
+
+    # En caso de empate, devolvemos la menor moda
+    return min(posibles_modas)
+
 # Function to print 
 def ordernar_preguntas(K, encuestados):
     # K is a dictionary where keys are questions and values are sets of encuestados
