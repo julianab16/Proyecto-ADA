@@ -32,13 +32,6 @@ def merge_encuestados(lista):
 
     return merge_sorted(merge_encuestados(lista[:mid]),  merge_encuestados(lista[mid:]))
 
-# Function to get the key from a value in a dictionary
-def obtener_llave_por_valor(diccionario, valor_buscado):
-    for llave, valor in diccionario:
-        if valor == valor_buscado:
-            return llave
-    return None
-
 # Function to merge and sort preguntas based on Experticia and Opinión
 def merge_opiniones(lista):
         if len(lista) <= 1:
@@ -79,26 +72,35 @@ def ordenar_encuestados(arr):
     print(nuevo_arr)
 
 # Function to calculate the average
-def calcular_promedio(list):
+def calcular_promedio(list, j):
     n = 0
     for i in list:
-        n += i[2]
+        n += i[j]
     promedio = n / len(list)
-    return promedio
+    promedio_redondeado = round(promedio, 2)
+    return promedio_redondeado
 
-def insertionsort_preguntas(arr):
+# Function to get the key from a value in a dictionary
+def obtener_llave_por_valor(diccionario, valor_buscado):
+    for llave, valor in diccionario:
+        if valor == valor_buscado:
+            return llave
+    return None
+
+
+def insertionsort(arr):
     n = len(arr)  # Get the length of the array
      
     if n <= 1:
         return  # If the array has 0 or 1 element, it is already sorted, so return
 
-    for i in range(0, n):  # Iterate over the array starting from the second element
-        key = arr[i][0]  # Store the current element as the key to be inserted in the right position
+    for i in range(1, n):  # Iterate over the array starting from the second element
+        key = arr[i]  # Store the current element as the key to be inserted in the right position
         j = i-1
-        while j >= 0 and key > arr[j][0]:  # Move elements greater than key one position ahead
+        while j >= 0 and key[0] > arr[j][0]:  # Move elements greater than key one position ahead
             arr[j+1] = arr[j] # Shift elements to the right
             j -= 1
-        arr[j+1][0] = key  # Insert the key in the correct position
+        arr[j+1] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
 
 def moda(lista):
@@ -125,8 +127,9 @@ def moda(lista):
     # En caso de empate, devolvemos la menor moda
     return min(posibles_modas)
 
+
 # Function to print 
-def ordernar_preguntas(K, encuestados):
+def ordenar_preguntas(K):
     # K is a dictionary where keys are questions and values are sets of encuestados
     M = K.keys()
     # Create a list of tuples where each tuple contains the value
@@ -143,21 +146,34 @@ def ordernar_preguntas(K, encuestados):
     # Iterate through each question in K
     for x in M:
         n = obtener_values(x, K)
-        promedio = calcular_promedio(n)
+        #print(f"Pregunta: {x}, Encuesados: {K[x]}")
+        promedio = calcular_promedio(n, 2)
         merged = merge_opiniones(n)
         preguntas.append([promedio, x, merged])
 
     # Sort the preguntas list
-    nuevo_arr = insertionsort_preguntas(preguntas)
+    preguntas_organizadas = insertionsort(preguntas)
+    return preguntas_organizadas
 
-    # Print the sorted preguntas
-    for u in nuevo_arr:
-        values = []
-        for i in u[2]:
-            values.append(obtener_llave_por_valor(encuestados, i))
-        print(f"{u[0]} {u[1]}: {values}")
+def ordenar_temas(K, encuestados):
+    items = K.items()
+    nuevo_arr = []
+    for b in items:
+        nuevo = ordenar_preguntas(b[1])
+        promedio = calcular_promedio(nuevo, 0)
+        #print(f"{promedio} {b[0]} :")
+        nuevo_arr.append((promedio, b[0],nuevo))
 
-
+    temas_organizados = insertionsort(nuevo_arr)
+    for i in temas_organizados:
+        print("\n")
+        print(f"{[i[0]]} {i[1]}")
+        for j in i[2]:
+            values = ()
+            for k in j[2]:
+                values += (obtener_llave_por_valor(encuestados, k),)
+            print(f"{[j[0]]} {j[1]}: {values}")
+ 
 encuestados = {
     1: ("Sofia García", 1, 6),
     2: ("Alejandro Torres", 7, 10),
@@ -176,21 +192,22 @@ encuestados = {
 tema_1 = {
     "Pregunta 1.1": {encuestados[10], encuestados[2]},
     "Pregunta 1.2": {encuestados[1], encuestados[9], encuestados[12], encuestados[6]}}
+tema_2 = {
+    "Pregunta 2.1": {encuestados[11], encuestados[8], encuestados[7]},
+    "Pregunta 2.2": {encuestados[3], encuestados[4], encuestados[5]}}
 
 temas = {
-    "Tema1": tema_1}
+    "Tema 1": tema_1,
+    "Tema 2": tema_2}
 
 personas = list(encuestados.items())
-
+print("Lista de encuestados ordenada")
 ordenar_encuestados(personas)
 print("\n")
-ordernar_preguntas(tema_1, personas)
-print("\n")
-
+print("Lista de Temas ordenada")
+ordenar_temas(temas, personas)
 
 """
-Falta ordenar los temas
-
 Dado que los valores de cada encuetado son una tupla,
 se puede acceder a ellos como encuestados[1][0] para el nombre, 
 encuestados[1][1] para la experticia y encuestados[1][2] para la opinión.
