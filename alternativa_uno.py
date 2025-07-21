@@ -157,12 +157,53 @@ def calcular_moda_lista(lista):
     return min(posibles_modas)
 
 # Función principal: calcula la moda del árbol Rojo-Negro
+# funcion de prueba se puede eliminar
 def calcular_moda_arbol(arbol_rb):
     opiniones = []
     recolectar_opiniones(arbol_rb.raiz, arbol_rb.NIL, opiniones)
     if not opiniones:
         return None  # Si no hay datos
     return calcular_moda_lista(opiniones)
+
+def pregunta_moda_max_min_arn(temas):
+    resultados = []
+
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id in preguntas:
+            encuestados = preguntas[pregunta_id]
+
+            # Insertar en un árbol rojo-negro temporal
+            arbol = ArbolRojoNegro()
+            for e in encuestados:
+                arbol.insertar(e)
+
+            # Recolectar opiniones desde el árbol
+            opiniones = []
+            recolectar_opiniones(arbol.raiz, arbol.NIL, opiniones)
+
+            if opiniones:
+                moda_valor = calcular_moda_lista(opiniones)
+                resultados.append((pregunta_id, moda_valor))
+
+    # Inicializar con la primera pregunta
+    mayor = menor = resultados[0]
+
+    for r in resultados[1:]:
+        # Comparar mayor moda
+        if r[1] > mayor[1]:
+            mayor = r
+        elif r[1] == mayor[1] and r[0] < mayor[0]:  # menor ID si empate
+            mayor = r
+
+        # Comparar menor moda
+        if r[1] < menor[1]:
+            menor = r
+        elif r[1] == menor[1] and r[0] < menor[0]:  # menor ID si empate
+            menor = r
+
+    print(f"Pregunta con MAYOR moda: {mayor[0]} con moda = {mayor[1]}")
+    print(f"Pregunta con MENOR moda: {menor[0]} con moda = {menor[1]}")
 
 
 
@@ -184,6 +225,33 @@ if __name__ == "__main__":
         {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"}
     ]
 
+    temas = {
+    "Tema 1": {
+        "Pregunta 1.1": [
+            {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
+            {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"}
+        ],
+        "Pregunta 1.2": [
+            {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
+            {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
+            {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"},
+            {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastian Perez"}
+        ]
+    },
+    "Tema 2": {
+        "Pregunta 2.1": [
+            {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
+            {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
+            {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"}
+        ],
+        "Pregunta 2.2": [
+            {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
+            {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
+            {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"}
+        ]
+    }
+    }
+
     for d in datos:
         arbol.insertar(d)
 
@@ -193,6 +261,7 @@ if __name__ == "__main__":
     print(lista_encuestados[::-1])
     moda_opinion = calcular_moda_arbol(arbol)
     print(f"Moda de opiniones en el árbol: {moda_opinion}")
+    pregunta_moda_max_min_arn(temas)
 
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 

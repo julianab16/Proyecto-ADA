@@ -103,6 +103,8 @@ def insertionsort(arr):
         arr[j+1] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
 
+# funcion moda que calcula la moda de una lista
+# Si hay empate, devuelve el menor valor
 def moda(lista):
     # Creamos un diccionario de frecuencias
     frecuencias = {}
@@ -126,6 +128,38 @@ def moda(lista):
 
     # En caso de empate, devolvemos la menor moda
     return min(posibles_modas)
+
+# funcion auxiliar para calcular la mayor y menor moda de las preguntas
+def pregunta_moda_max_min(temas):
+    lista_modas = []
+
+    for tema_nombre in temas:
+        tema = temas[tema_nombre]
+        for pregunta_id in tema:
+            encuestados = list(tema[pregunta_id])
+            opiniones = [e[2] for e in encuestados]
+            moda_valor = moda(opiniones)
+            lista_modas.append((pregunta_id, moda_valor))
+
+    # Inicializamos con la primera
+    mayor_moda = lista_modas[0]
+    menor_moda = lista_modas[0]
+
+    for item in lista_modas[1:]:
+        # Mayor moda
+        if item[1] > mayor_moda[1]:
+            mayor_moda = item
+        elif item[1] == mayor_moda[1] and item[0] < mayor_moda[0]:
+            mayor_moda = item
+
+        # Menor moda
+        if item[1] < menor_moda[1]:
+            menor_moda = item
+        elif item[1] == menor_moda[1] and item[0] < menor_moda[0]:
+            menor_moda = item
+
+    print(f"\nPregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
+    print(f"Pregunta con MENOR valor de moda: {menor_moda[0]} con moda = {menor_moda[1]}")
 
 
 # Function to print 
@@ -206,6 +240,7 @@ ordenar_encuestados(personas)
 print("\n")
 print("Lista de Temas ordenada")
 ordenar_temas(temas, personas)
+pregunta_moda_max_min(temas)
 opiniones = [6, 7, 7, 3, 3]
 print("moda de las opiniones:")
 print(moda(opiniones))
