@@ -161,6 +161,43 @@ def pregunta_moda_max_min(temas):
     print(f"\nPregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
     print(f"Pregunta con MENOR valor de moda: {menor_moda[0]} con moda = {menor_moda[1]}")
 
+# función para calcular la pregunta con mayor consenso en esta estructura
+def pregunta_mayor_consenso(temas):
+     # Inicializamos la mejor pregunta y el consenso más alto
+    mejor_pregunta = None
+    mejor_consenso = -1.0
+
+    # Recorremos cada tema
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+         # Recorremos cada pregunta en ese tema
+        for pregunta_id in preguntas:
+            encuestados = list(preguntas[pregunta_id])
+            # Extraemos las opiniones de los encuestados (posición 2 en la tupla)
+            opiniones = [e[2] for e in encuestados]
+            if not opiniones:
+                continue
+
+             # Calculamos la moda de las opiniones con la funcion    
+            moda_valor = moda(opiniones)
+             
+             # Contamos cuántos encuestados dieron esa opinión
+            cantidad_moda = opiniones.count(moda_valor)
+            total = len(opiniones)
+           
+             # Calculamos el porcentaje de consenso
+            consenso = cantidad_moda / total  
+
+            # Verificamos si esta pregunta tiene mayor consenso que la actual mejor
+            if consenso > mejor_consenso or (consenso == mejor_consenso and pregunta_id < mejor_pregunta):
+                mejor_consenso = consenso
+                mejor_pregunta = pregunta_id
+
+    # Mostramos la mejor pregunta encontrada y su porcentaje de consenso
+    porcentaje = round(mejor_consenso * 100, 2)
+    print(f"\nPregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
+    
+
 
 # Function to print 
 def ordenar_preguntas(K):
@@ -244,6 +281,7 @@ pregunta_moda_max_min(temas)
 opiniones = [6, 7, 7, 3, 3]
 print("moda de las opiniones:")
 print(moda(opiniones))
+pregunta_mayor_consenso(temas)
 """
 Dado que los valores de cada encuetado son una tupla,
 se puede acceder a ellos como encuestados[1][0] para el nombre, 

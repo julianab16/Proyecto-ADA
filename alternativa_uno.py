@@ -126,7 +126,7 @@ class ArbolRojoNegro:
             resultado.append(nodo.id)
             self.recorrido_inorden(nodo.izq, resultado)
 
-    # Recorre el árbol y extrae todas las opiniones en una lista
+         # Recorre el árbol y extrae todas las opiniones en una lista
 def recolectar_opiniones(nodo, NIL, opiniones):
     if nodo != NIL:
         recolectar_opiniones(nodo.izq, NIL, opiniones)
@@ -204,8 +204,41 @@ def pregunta_moda_max_min_arn(temas):
 
     print(f"Pregunta con MAYOR moda: {mayor[0]} con moda = {mayor[1]}")
     print(f"Pregunta con MENOR moda: {menor[0]} con moda = {menor[1]}")
+    
+def pregunta_mayor_consenso(temas):
+ # Inicializamos variables para guardar la mejor pregunta y el mayor porcentaje de consenso encontrado   
+    mejor_pregunta = None
+    mejor_consenso = -1.0
+ 
+  # Iteramos sobre cada tema
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+       
+        # Iteramos sobre cada pregunta dentro del tema
+        for pregunta_id in preguntas:
+            encuestados = preguntas[pregunta_id]
+             # Extraemos solo las opiniones de los encuestados
+            opiniones = [e["opinion"] for e in encuestados]
+            if not opiniones:
+                continue
 
+            # Calculamos la moda para esta pregunta con la funcion de moda de arriba       
+            moda = calcular_moda_lista(opiniones)
+            cantidad_moda = opiniones.count(moda)
+             # Contamos cuántos encuestados tienen esa opinión
+            total = len(opiniones)
+            consenso = cantidad_moda / total  #aqui calculamos el porcentaje entre 0 y 1 del consenso
 
+            # Actualizamos si encontramos una pregunta con mayor consenso,
+            # o si hay empate, la que tenga ID menor (lexicográficamente)
+            if consenso > mejor_consenso or (consenso == mejor_consenso and pregunta_id < mejor_pregunta):
+                mejor_consenso = consenso
+                mejor_pregunta = pregunta_id
+    
+    # Imprimimos la pregunta con mayor consenso y su porcentaje (redondeado)
+    porcentaje = round(mejor_consenso * 100, 2)
+    print(f"Pregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
+   
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
@@ -226,6 +259,7 @@ if __name__ == "__main__":
     ]
 
     temas = {
+        
     "Tema 1": {
         "Pregunta 1.1": [
             {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
@@ -252,6 +286,7 @@ if __name__ == "__main__":
     }
     }
 
+
     for d in datos:
         arbol.insertar(d)
 
@@ -262,6 +297,8 @@ if __name__ == "__main__":
     moda_opinion = calcular_moda_arbol(arbol)
     print(f"Moda de opiniones en el árbol: {moda_opinion}")
     pregunta_moda_max_min_arn(temas)
+    pregunta_mayor_consenso(temas)
+ 
 
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
