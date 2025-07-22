@@ -126,6 +126,14 @@ class ArbolRojoNegro:
             resultado.append(nodo.id)
             self.recorrido_inorden(nodo.izq, resultado)
 
+    def mediana(self, preguntas, arbol):
+        for n in preguntas:
+            print(f"Pregunta: {n}")
+            for i in arbol.id:
+                print(f"ID: {i['id']}, Experticia: {i['experticia']}, Opinion: {i['opinion']}, Nombre: {i['nombre']}")
+
+        
+
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
@@ -152,6 +160,7 @@ if __name__ == "__main__":
     arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
+    arbol.mediana({10,2}, arbol)
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 
