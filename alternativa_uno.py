@@ -321,6 +321,31 @@ def calcular_mediana_por_pregunta(temas):
     print(f"Pregunta con Mayor mediana de opinion: [{mayor_mediana}] Pregunta: {mayor_pregunta[9:]}")
     print(f"Pregunta con Menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}")
 
+def pregunta_mayor_extremismo(temas):
+    # Inicializa variables para guardar el mayor porcentaje de extremismo y la pregunta correspondiente
+    mayor_extremismo = None
+    pregunta_mayor = None
+    # Recorre todos los temas
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        # Recorre todas las preguntas de cada tema
+        for pregunta_id, encuestados in preguntas.items():
+            total = len(encuestados)  # Total de encuestados en la pregunta
+            if total == 0:
+                continue  # Si no hay encuestados, pasa a la siguiente pregunta
+            # Cuenta cuántos encuestados tienen opinión 0 o 10 (extremos)
+            extremos = sum(1 for e in encuestados if e['opinion'] == 0 or e['opinion'] == 10)
+            porcentaje = extremos / total  # Calcula el porcentaje de extremismo
+            # Actualiza si encuentra un mayor porcentaje de extremismo o empate con menor ID
+            if (mayor_extremismo is None) or (porcentaje > mayor_extremismo) or (porcentaje == mayor_extremismo and pregunta_id < pregunta_mayor):
+                mayor_extremismo = porcentaje
+                pregunta_mayor = pregunta_id
+    # Imprime el resultado si se encontró alguna pregunta con encuestados
+    if pregunta_mayor is not None:
+        print(f"Pregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo*100:.2f}%")
+    else:
+        print("No hay preguntas con extremismo.")
+
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
@@ -383,8 +408,10 @@ if __name__ == "__main__":
     print()
     print("Medianas:")
     calcular_mediana_por_pregunta(temas)
-    print("Coseno:")
+    print("Consenso:")
     pregunta_mayor_consenso(temas)
+    print("Extremismo:")
+    pregunta_mayor_extremismo(temas)
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 
