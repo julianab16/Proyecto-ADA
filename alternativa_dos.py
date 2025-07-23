@@ -63,6 +63,31 @@ def merge_opiniones(lista):
             return merged
         return merge_sorted(merge_opiniones(lista[:mid]),  merge_opiniones(lista[mid:]))
 
+# Merge que ordena las medianas
+def merge_medianas(lista):
+    if len(lista) <= 1:
+        return lista
+    mid = len(lista) // 2
+
+    def merge_sorted(left, right):
+        merged = []
+        while left and right:
+            # Compara primero por mediana (valor en posición [1])
+            if left[0][1] < right[0][1]:
+                merged.append(left.pop(0))
+            elif left[0][1] == right[0][1]:
+                # En caso de empate, usar el identificador de pregunta (posición [0]) en orden alfabético
+                if left[0][0] < right[0][0]:
+                    merged.append(left.pop(0))
+                else:
+                    merged.append(right.pop(0))
+            else:
+                merged.append(right.pop(0))
+
+        merged.extend(left or right)
+        return merged
+    return merge_sorted(merge_medianas(lista[:mid]), merge_medianas(lista[mid:]))
+
 # Function outs the list of IDs ordered
 def ordenar_encuestados(arr):
     nuevo_arr = []
@@ -87,13 +112,10 @@ def obtener_llave_por_valor(diccionario, valor_buscado):
             return llave
     return None
 
-
 def insertionsort(arr):
     n = len(arr)  # Get the length of the array
-     
     if n <= 1:
         return  # If the array has 0 or 1 element, it is already sorted, so return
-
     for i in range(1, n):  # Iterate over the array starting from the second element
         key = arr[i]  # Store the current element as the key to be inserted in the right position
         j = i-1
@@ -103,6 +125,61 @@ def insertionsort(arr):
         arr[j+1] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
 
+# funcion moda que calcula la moda de una lista
+# Si hay empate, devuelve el menor valor
+def moda(lista):
+    # Creamos un diccionario de frecuencias
+    frecuencias = {}
+    
+    for valor in lista:
+        if valor in frecuencias:
+            frecuencias[valor] += 1
+        else:
+            frecuencias[valor] = 1
+
+    # Buscamos el valor de mayor frecuencia
+    max_frecuencia = 0
+    posibles_modas = []
+
+    for valor in frecuencias:
+        if frecuencias[valor] > max_frecuencia:
+            max_frecuencia = frecuencias[valor]
+            posibles_modas = [valor]
+        elif frecuencias[valor] == max_frecuencia:
+            posibles_modas.append(valor)
+
+    # En caso de empate, devolvemos la menor moda
+    return min(posibles_modas)
+
+# Funcion auxiliar para calcular la mayor y menor moda de las preguntas
+def pregunta_moda_max_min(temas):
+    lista_modas = []
+    for tema_nombre in temas:
+        tema = temas[tema_nombre]
+        for pregunta_id in tema:
+            encuestados = list(tema[pregunta_id])
+            opiniones = [e[2] for e in encuestados]
+            moda_valor = moda(opiniones)
+            lista_modas.append((pregunta_id, moda_valor))
+
+    # Inicializamos con la primera
+    mayor_moda = lista_modas[0]
+    menor_moda = lista_modas[0]
+
+    for item in lista_modas[1:]:
+        # Mayor moda
+        if item[1] > mayor_moda[1]:
+            mayor_moda = item
+        elif item[1] == mayor_moda[1] and item[0] < mayor_moda[0]:
+            mayor_moda = item
+        # Menor moda
+        if item[1] < menor_moda[1]:
+            menor_moda = item
+        elif item[1] == menor_moda[1] and item[0] < menor_moda[0]:
+            menor_moda = item
+
+    print(f"\nPregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
+    print(f"Pregunta con MENOR valor de moda: {menor_moda[0]} con moda = {menor_moda[1]}")
 
 # Function to print 
 def ordenar_preguntas(K):
@@ -122,8 +199,9 @@ def ordenar_preguntas(K):
     # Iterate through each question in K
     for x in M:
         n = obtener_values(x, K)
-        #print(f"Pregunta: {x}, Encuesados: {K[x]}")
+        # Calcula el promedio
         promedio = calcular_promedio(n, 2)
+        # Organiza las opniones
         merged = merge_opiniones(n)
         preguntas.append([promedio, x, merged])
 
@@ -131,25 +209,68 @@ def ordenar_preguntas(K):
     preguntas_organizadas = insertionsort(preguntas)
     return preguntas_organizadas
 
+# Ordena los temas por promedio de preguntas
 def ordenar_temas(K, encuestados):
-    items = K.items()
+    items = K.items() #Saca las llaves de la lista
     nuevo_arr = []
-    for b in items:
-        nuevo = ordenar_preguntas(b[1])
+    for tema in items:
+        #ordena los preguntas primero
+        nuevo = ordenar_preguntas(tema[1])
+        #calcula el promedio de cada tema
         promedio = calcular_promedio(nuevo, 0)
-        #print(f"{promedio} {b[0]} :")
-        nuevo_arr.append((promedio, b[0],nuevo))
+        nuevo_arr.append((promedio, tema[0], nuevo))
 
+    #ordena cada tema dependiendo de su promedio 
     temas_organizados = insertionsort(nuevo_arr)
-    for i in temas_organizados:
-        print("\n")
-        print(f"{[i[0]]} {i[1]}")
-        for j in i[2]:
+    for tema in temas_organizados:
+        #improme promedio y tema
+        print(f"{[tema[0]]} {tema[1]}")
+        for pregunta in tema[2]:
             values = ()
-            for k in j[2]:
-                values += (obtener_llave_por_valor(encuestados, k),)
-            print(f"{[j[0]]} {j[1]}: {values}")
- 
+            for encuestado in pregunta[2]:
+                #Saca los IDs de cada encuestado
+                values += (obtener_llave_por_valor(encuestados, encuestado),)
+            #impreme el promedio de prehunta, pregunta y Id de los encuestados
+            print(f"{[pregunta[0]]} {pregunta[1]}: {values}")
+
+# Funcion para calcular la mediana
+def calcular_mediana(lista):
+    n = len(lista)
+    if n % 2 == 1:
+        return lista[n // 2]
+    else:
+        return (lista[n // 2 - 1] + lista[n // 2]) // 2
+    
+# Funcion que calcula la mediana mayor y menor
+def calcular_mediana_por_pregunta(temas):
+    items = temas.items() # Saca los valores del diccionario
+    nuevo_array = []
+    for b in items:
+        # Ordena las preguntas
+        nuevo = ordenar_preguntas(b[1])
+        for n in nuevo:
+            # Guarda la pregunta y encuestados
+            nuevo_array.append((n[1], n[2]))
+
+    # Itera el arreglo de nuevo_array 
+    for i, (tema_nombre, op) in enumerate(nuevo_array):
+        # Guarda las opiniones de cada pregunta
+        opiniones = [e[2] for e in op]
+        # Calcula la mediana
+        mediana = calcular_mediana(opiniones)
+        # Reemplazar la lista de opiniones por la mediana
+        nuevo_array[i] = (tema_nombre, mediana)  
+
+    # Ordena las medianas
+    medianas_ordenadas = merge_medianas(nuevo_array)
+    # Mediana mayor y menor
+    mayor_pregunta, mayor= medianas_ordenadas[-1]
+    menor_pregunta, menor = medianas_ordenadas[0]
+    
+    print(f"Pregunta con Mayor mediana de opinion: [{mayor}] Pregunta: {mayor_pregunta[9:]}")
+    print(f"Pregunta con Menor mediana de opinion: [{menor}] Pregunta: {menor_pregunta[9:]}")
+
+
 encuestados = {
     1: ("Sofia García", 1, 6),
     2: ("Alejandro Torres", 7, 10),
@@ -182,9 +303,16 @@ ordenar_encuestados(personas)
 print("\n")
 print("Lista de Temas ordenada")
 ordenar_temas(temas, personas)
+pregunta_moda_max_min(temas)
+opiniones = [6, 7, 7, 3, 3]
+print("Moda de las opiniones:")
+print(moda(opiniones))
+print("\n")
+print("Mediana:")
+calcular_mediana_por_pregunta(temas)
 
 """
-Dado que los valores de cada encuetado son una tupla,
+Dado que los valores de cada encuestado son una tupla,
 se puede acceder a ellos como encuestados[1][0] para el nombre, 
 encuestados[1][1] para la experticia y encuestados[1][2] para la opinión.
 

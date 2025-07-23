@@ -126,18 +126,174 @@ class ArbolRojoNegro:
             resultado.append(nodo.id)
             self.recorrido_inorden(nodo.izq, resultado)
 
-    def mediana(self, preguntas, arbol):
-        for n in preguntas:
-            print(f"Pregunta: {n}")
-            for i in arbol.id:
-                print(f"ID: {i['id']}, Experticia: {i['experticia']}, Opinion: {i['opinion']}, Nombre: {i['nombre']}")
+class ArbolOpiniones(ArbolRojoNegro):
+    def insertar(self, opinion_valor):
+        # El ID y demás datos no importan aquí, solo la opinión para ordenarla
+        nodo = NodoRB(id_encuestado=opinion_valor, experticia=0, opinion=opinion_valor, nombre=None)
+        nodo.izq = self.NIL
+        nodo.der = self.NIL
+        nodo.padre = None
 
-        
+        y = None
+        x = self.raiz
+
+        while x != self.NIL:
+            y = x
+            # Ordenar ascendente por opinión
+            if nodo.opinion < x.opinion:
+                x = x.izq
+            else:
+                x = x.der
+
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+        elif nodo.opinion < y.opinion:
+            y.izq = nodo
+        else:
+            y.der = nodo
+
+        nodo.color = 'R'
+        self.insertar_fixup(nodo)
+
+def obtener_opiniones_ordenadas(arbol):
+        resultado = []
+
+        def inorden(nodo):
+            if nodo != arbol.NIL:
+                inorden(nodo.izq)
+                resultado.append(nodo.opinion)
+                inorden(nodo.der)
+
+        inorden(arbol.raiz)
+        return resultado
+
+    # Recorre el árbol y extrae todas las opiniones en una lista
+def recolectar_opiniones(nodo, NIL, opiniones):
+    if nodo != NIL:
+        recolectar_opiniones(nodo.izq, NIL, opiniones)
+        if nodo.opinion is not None:
+            opiniones.append(nodo.opinion)
+        recolectar_opiniones(nodo.der, NIL, opiniones)
+
+# Calcula la moda de una lista, devolviendo la menor si hay empate
+def calcular_moda_lista(lista):
+    frecuencias = {}
+
+    for valor in lista:
+        if valor in frecuencias:
+            frecuencias[valor] += 1
+        else:
+            frecuencias[valor] = 1
+
+    max_frecuencia = 0
+    posibles_modas = []
+
+    for valor in frecuencias:
+        if frecuencias[valor] > max_frecuencia:
+            max_frecuencia = frecuencias[valor]
+            posibles_modas = [valor]
+        elif frecuencias[valor] == max_frecuencia:
+            posibles_modas.append(valor)
+
+    return min(posibles_modas)
+
+# Función principal: calcula la moda del árbol Rojo-Negro
+# funcion de prueba se puede eliminar
+def calcular_moda_arbol(arbol_rb):
+    opiniones = []
+    recolectar_opiniones(arbol_rb.raiz, arbol_rb.NIL, opiniones)
+    if not opiniones:
+        return None  # Si no hay datos
+    return calcular_moda_lista(opiniones)
+
+def pregunta_moda_max_min_arn(temas):
+    resultados = []
+
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id in preguntas:
+            encuestados = preguntas[pregunta_id]
+
+            # Insertar en un árbol rojo-negro temporal
+            arbol = ArbolRojoNegro()
+            for e in encuestados:
+                arbol.insertar(e)
+
+            # Recolectar opiniones desde el árbol
+            opiniones = []
+            recolectar_opiniones(arbol.raiz, arbol.NIL, opiniones)
+
+            if opiniones:
+                moda_valor = calcular_moda_lista(opiniones)
+                resultados.append((pregunta_id, moda_valor))
+
+    # Inicializar con la primera pregunta
+    mayor = menor = resultados[0]
+
+    for r in resultados[1:]:
+        # Comparar mayor moda
+        if r[1] > mayor[1]:
+            mayor = r
+        elif r[1] == mayor[1] and r[0] < mayor[0]:  # menor ID si empate
+            mayor = r
+
+        # Comparar menor moda
+        if r[1] < menor[1]:
+            menor = r
+        elif r[1] == menor[1] and r[0] < menor[0]:  # menor ID si empate
+            menor = r
+
+    print(f"Pregunta con MAYOR moda: {mayor[0]} con moda = {mayor[1]}")
+    print(f"Pregunta con MENOR moda: {menor[0]} con moda = {menor[1]}")
+
+# Funcion para calcular la mediana
+def calcular_mediana(lista):
+    n = len(lista)
+    if n % 2 == 1:
+        return lista[n // 2]
+    else:
+        return (lista[n // 2 - 1] + lista[n // 2]) // 2
+    
+def calcular_mediana_por_pregunta(temas):
+    resultados = {}  # Guardará las opiniones por pregunta
+    for tema_nombre in temas:
+        tema = temas[tema_nombre]
+        for pregunta_id in tema:
+            encuestados = list(tema[pregunta_id])
+            #Saca los opniones en un arreglo
+            opiniones = [e['opinion'] for e in encuestados]
+            resultados[pregunta_id] = opiniones
+
+    medianas = {}
+    for pregunta_id, opiniones in resultados.items():
+        #Ordena los opiniones 
+        arbol = ArbolOpiniones()
+        for op in opiniones:
+            arbol.insertar(op)
+        ordenadas = obtener_opiniones_ordenadas(arbol)
+        #Despues de ordenadas, calcula la mediana
+        mediana = calcular_mediana(ordenadas)
+        medianas[pregunta_id] = mediana
+
+    # Ordena las mediadas
+    arbol = ArbolOpiniones()
+    for pregunta_id, mediana in medianas.items():
+        arbol.insertar((mediana, pregunta_id))  # Mediana como clave, pregunta como valor
+    ordenadas = obtener_opiniones_ordenadas(arbol)
+
+    # Mayor y menor
+    menor_mediana, menor_pregunta = ordenadas[0]
+    mayor_mediana, mayor_pregunta = ordenadas[-1]
+
+    print(f"Pregunta con Mayor mediana de opinion: [{mayor_mediana}] Pregunta: {mayor_pregunta[9:]}")
+    print(f"Pregunta con Menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}")
 
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
     arbol = ArbolRojoNegro()
+    arbol_opiniones = ArbolOpiniones()
     datos = [
         {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
         {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"},
@@ -153,6 +309,32 @@ if __name__ == "__main__":
         {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"}
     ]
 
+    temas = {
+    "Tema 1": {
+        "Pregunta 1.1": [
+            {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
+            {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"}
+        ],
+        "Pregunta 1.2": [
+            {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
+            {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
+            {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"},
+            {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastian Perez"}
+        ]
+    },
+    "Tema 2": {
+        "Pregunta 2.1": [
+            {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
+            {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
+            {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"}
+        ],
+        "Pregunta 2.2": [
+            {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
+            {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
+            {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"}
+        ]}
+    }
+
     for d in datos:
         arbol.insertar(d)
 
@@ -160,7 +342,14 @@ if __name__ == "__main__":
     arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
-    arbol.mediana({10,2}, arbol)
+
+    moda_opinion = calcular_moda_arbol(arbol)
+    print(f"Moda de opiniones en el árbol: {moda_opinion}")
+    pregunta_moda_max_min_arn(temas)
+    print()
+    print("Medianas:")
+    calcular_mediana_por_pregunta(temas)
+
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 
