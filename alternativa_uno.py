@@ -217,6 +217,34 @@ def recolectar_opiniones(nodo, NIL, opiniones):
             opiniones.append(nodo.opinion)
         recolectar_opiniones(nodo.der, NIL, opiniones)
 
+
+# Calcula el promedio de la lista 
+def calcular_promedio(lista):
+    if not lista:
+        return 0  # Evita división por cero si la lista está vacía
+    return sum(lista) / len(lista)
+
+
+def pregunta_mayor_menor_promedio(temas):
+    resultados = []
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id, encuestados in preguntas.items():
+            opiniones = [e['opinion'] for e in encuestados]
+            if opiniones:
+                promedio = calcular_promedio(opiniones)
+                resultados.append((pregunta_id, promedio))
+    if not resultados:
+        print("No hay preguntas con opiniones.")
+        return
+
+    mayor = max(resultados, key=lambda x: (x[1], -ord(x[0][0])))
+    menor = min(resultados, key=lambda x: (x[1], x[0]))
+
+    print(f"Pregunta con MAYOR promedio: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con MENOR promedio: {menor[0]} con promedio = {menor[1]:.2f}")
+
+
 # Calcula la moda de una lista, devolviendo la menor si hay empate
 def calcular_moda_lista(lista):
     frecuencias = {}
@@ -360,6 +388,31 @@ def calcular_mediana_por_pregunta(temas):
     print(f"Pregunta con Mayor mediana de opinion: [{mayor_mediana}] Pregunta: {mayor_pregunta[9:]}")
     print(f"Pregunta con Menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}") 
 
+def pregunta_mayor_extremismo(temas):
+    # Inicializa variables para guardar el mayor porcentaje de extremismo y la pregunta correspondiente
+    mayor_extremismo = None
+    pregunta_mayor = None
+    # Recorre todos los temas
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        # Recorre todas las preguntas de cada tema
+        for pregunta_id, encuestados in preguntas.items():
+            total = len(encuestados)  # Total de encuestados en la pregunta
+            if total == 0:
+                continue  # Si no hay encuestados, pasa a la siguiente pregunta
+            # Cuenta cuántos encuestados tienen opinión 0 o 10 (extremos)
+            extremos = sum(1 for e in encuestados if e['opinion'] == 0 or e['opinion'] == 10)
+            porcentaje = extremos / total  # Calcula el porcentaje de extremismo
+            # Actualiza si encuentra un mayor porcentaje de extremismo o empate con menor ID
+            if (mayor_extremismo is None) or (porcentaje > mayor_extremismo) or (porcentaje == mayor_extremismo and pregunta_id < pregunta_mayor):
+                mayor_extremismo = porcentaje
+                pregunta_mayor = pregunta_id
+    # Imprime el resultado si se encontró alguna pregunta con encuestados
+    if pregunta_mayor is not None:
+        print(f"Pregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo*100:.2f}%")
+    else:
+        print("No hay preguntas con extremismo.")
+
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
@@ -416,15 +469,22 @@ if __name__ == "__main__":
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
     print()
-    moda_opinion = calcular_moda_arbol(arbol)
-    print(f"Moda de opiniones en el árbol: {moda_opinion}")
+    print("Promedios:")
+    pregunta_mayor_menor_promedio(temas)
+    print()
+    print(f"Moda:")
     pregunta_moda_max_min_arn(temas)
     print()
     print("Medianas:")
     calcular_mediana_por_pregunta(temas)
     print()
-    print("Coseno:")
+    print("Consenso:")
     pregunta_mayor_consenso(temas)
+    print()
+    print("Extremismo:")
+    pregunta_mayor_extremismo(temas)
+    
+
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 

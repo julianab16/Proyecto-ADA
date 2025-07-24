@@ -125,6 +125,52 @@ def insertionsort(arr):
         arr[j+1] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
 
+# Ordena los temas por promedio de preguntas
+def ordenar_temas(K, encuestados):
+    items = K.items() #Saca las llaves de la lista
+    nuevo_arr = []
+    for tema in items:
+        #ordena los preguntas primero
+        nuevo = ordenar_preguntas(tema[1])
+        #calcula el promedio de cada tema
+        promedio = calcular_promedio(nuevo, 0)
+        nuevo_arr.append((promedio, tema[0], nuevo))
+
+    #ordena cada tema dependiendo de su promedio 
+    temas_organizados = insertionsort(nuevo_arr)
+    for tema in temas_organizados:
+        #improme promedio y tema
+        print(f"{[tema[0]]} {tema[1]}")
+        for pregunta in tema[2]:
+            values = ()
+            for encuestado in pregunta[2]:
+                #Saca los IDs de cada encuestado
+                values += (obtener_llave_por_valor(encuestados, encuestado),)
+            #impreme el promedio de prehunta, pregunta y Id de los encuestados
+            print(f" {[pregunta[0]]} {pregunta[1]}: {values}")
+            
+# Función para encontrar la pregunta con mayor y menor promedio de las opiniones
+def pregunta_mayor_menor_promedio(temas):
+    promedios = []
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id in preguntas:
+            encuestados = list(preguntas[pregunta_id])
+            opiniones = [e[2] for e in encuestados]
+            if opiniones:
+                promedio = sum(opiniones) / len(opiniones)
+                promedios.append((pregunta_id, promedio))
+    if not promedios:
+        print("No hay preguntas con opiniones")
+        return
+
+    mayor = max(promedios, key=lambda x: (x[1], -ord(x[0][0])))
+    menor = min(promedios, key=lambda x: (x[1], x[0]))
+
+    print(f"Pregunta con MAYOR promedio: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con MENOR promedio: {menor[0]} con promedio = {menor[1]:.2f}")
+
+
 # funcion moda que calcula la moda de una lista
 # Si hay empate, devuelve el menor valor
 def moda(lista):
@@ -178,7 +224,7 @@ def pregunta_moda_max_min(temas):
         elif item[1] == menor_moda[1] and item[0] < menor_moda[0]:
             menor_moda = item
 
-    print(f"\nPregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
+    print(f"Pregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
     print(f"Pregunta con MENOR valor de moda: {menor_moda[0]} con moda = {menor_moda[1]}")
 
 # función para calcular la pregunta con mayor consenso en esta estructura
@@ -235,30 +281,6 @@ def ordenar_preguntas(K):
     preguntas_organizadas = insertionsort(preguntas)
     return preguntas_organizadas
 
-# Ordena los temas por promedio de preguntas
-def ordenar_temas(K, encuestados):
-    items = K.items() #Saca las llaves de la lista
-    nuevo_arr = []
-    for tema in items:
-        #ordena los preguntas primero
-        nuevo = ordenar_preguntas(tema[1])
-        #calcula el promedio de cada tema
-        promedio = calcular_promedio(nuevo, 0)
-        nuevo_arr.append((promedio, tema[0], nuevo))
-
-    #ordena cada tema dependiendo de su promedio 
-    temas_organizados = insertionsort(nuevo_arr)
-    for tema in temas_organizados:
-        #improme promedio y tema
-        print(f"{[tema[0]]} {tema[1]}")
-        for pregunta in tema[2]:
-            values = ()
-            for encuestado in pregunta[2]:
-                #Saca los IDs de cada encuestado
-                values += (obtener_llave_por_valor(encuestados, encuestado),)
-            #impreme el promedio de prehunta, pregunta y Id de los encuestados
-            print(f" {[pregunta[0]]} {pregunta[1]}: {values}")
-
 # Funcion para calcular la mediana
 def calcular_mediana(lista):
     n = len(lista)
@@ -296,6 +318,33 @@ def calcular_mediana_por_pregunta(temas):
     print(f"Pregunta con Mayor mediana de opinion: [{mayor}] Pregunta: {mayor_pregunta[9:]}")
     print(f"Pregunta con Menor mediana de opinion: [{menor}] Pregunta: {menor_pregunta[9:]}")
 
+def pregunta_mayor_extremismo(temas):
+    """
+    Encuentra la pregunta con mayor extremismo, donde extremismo es el porcentaje
+    de opiniones 0 o 10 respecto al total de opiniones en cada pregunta.
+    """
+    mayor_extremismo = None
+    pregunta_mayor = None
+
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id in preguntas:
+            encuestados = list(preguntas[pregunta_id])
+            total = len(encuestados)
+            if total == 0:
+                continue
+            # Opinión está en la posición 2 de la tupla
+            extremos = sum(1 for e in encuestados if e[2] == 0 or e[2] == 10)
+            porcentaje = extremos / total
+            if (mayor_extremismo is None) or (porcentaje > mayor_extremismo) or (porcentaje == mayor_extremismo and pregunta_id < pregunta_mayor):
+                mayor_extremismo = porcentaje
+                pregunta_mayor = pregunta_id
+
+    if pregunta_mayor is not None:
+        print(f"Pregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo*100:.2f}%")
+    else:
+        print("\nNo hay preguntas con extremismo.")
+
 
 encuestados = {
     1: ("Sofia García", 1, 6),
@@ -329,16 +378,21 @@ ordenar_encuestados(personas)
 print()
 print("Lista de Temas ordenada")
 ordenar_temas(temas, personas)
+print()
+print("Promedio:")
+pregunta_mayor_menor_promedio(temas)
+print()
+print("Moda:")
 pregunta_moda_max_min(temas)
-opiniones = [6, 7, 7, 3, 3]
-print("Moda de las opiniones:")
-print(moda(opiniones))
 print()
 print("Mediana:")
 calcular_mediana_por_pregunta(temas)
 print()
-print("Coseno:")
+print("Consenso:")
 pregunta_mayor_consenso(temas)
+print()
+print("Extremismo:")
+pregunta_mayor_extremismo(temas)
 
 """
 Dado que los valores de cada encuestado son una tupla,
