@@ -156,6 +156,7 @@ class ArbolOpiniones(ArbolRojoNegro):
         nodo.color = 'R'
         self.insertar_fixup(nodo)
 
+
 def obtener_opiniones_ordenadas(arbol):
         resultado = []
 
@@ -175,6 +176,36 @@ def recolectar_opiniones(nodo, NIL, opiniones):
         if nodo.opinion is not None:
             opiniones.append(nodo.opinion)
         recolectar_opiniones(nodo.der, NIL, opiniones)
+
+
+# Calcula el promedio de la lista 
+def calcular_promedio(lista):
+    if not lista:
+        return 0  # Evita división por cero si la lista está vacía
+    return sum(lista) / len(lista)
+
+
+def pregunta_mayor_menor_promedio(temas):
+    resultados = []
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id, encuestados in preguntas.items():
+            opiniones = [e['opinion'] for e in encuestados]
+            if opiniones:
+                promedio = calcular_promedio(opiniones)
+                resultados.append((pregunta_id, promedio))
+    if not resultados:
+        print("No hay preguntas con opiniones.")
+        return
+
+    mayor = max(resultados, key=lambda x: (x[1], -ord(x[0][0])))
+    menor = min(resultados, key=lambda x: (x[1], x[0]))
+
+    print(f"Pregunta con MAYOR promedio: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con MENOR promedio: {menor[0]} con promedio = {menor[1]:.2f}")
+
+
+
 
 # Calcula la moda de una lista, devolviendo la menor si hay empate
 def calcular_moda_lista(lista):
@@ -401,17 +432,27 @@ if __name__ == "__main__":
     arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
-
+    print()
+    
+    print()
+    print("Promedios:")
+    pregunta_mayor_menor_promedio(temas)
+    print()
     moda_opinion = calcular_moda_arbol(arbol)
     print(f"Moda de opiniones en el árbol: {moda_opinion}")
     pregunta_moda_max_min_arn(temas)
     print()
     print("Medianas:")
     calcular_mediana_por_pregunta(temas)
+    print()
     print("Consenso:")
     pregunta_mayor_consenso(temas)
+    print()
     print("Extremismo:")
     pregunta_mayor_extremismo(temas)
+    
+
+
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 

@@ -125,6 +125,28 @@ def insertionsort(arr):
         arr[j+1] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
 
+# Función para encontrar la pregunta con mayor y menor promedio de las opiniones
+def pregunta_mayor_menor_promedio(temas):
+    promedios = []
+    for tema_nombre in temas:
+        preguntas = temas[tema_nombre]
+        for pregunta_id in preguntas:
+            encuestados = list(preguntas[pregunta_id])
+            opiniones = [e[2] for e in encuestados]
+            if opiniones:
+                promedio = sum(opiniones) / len(opiniones)
+                promedios.append((pregunta_id, promedio))
+    if not promedios:
+        print("No hay preguntas con opiniones")
+        return
+
+    mayor = max(promedios, key=lambda x: (x[1], -ord(x[0][0])))
+    menor = min(promedios, key=lambda x: (x[1], x[0]))
+
+    print(f"Pregunta con MAYOR promedio: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con MENOR promedio: {menor[0]} con promedio = {menor[1]:.2f}")
+
+
 # funcion moda que calcula la moda de una lista
 # Si hay empate, devuelve el menor valor
 def moda(lista):
@@ -178,7 +200,7 @@ def pregunta_moda_max_min(temas):
         elif item[1] == menor_moda[1] and item[0] < menor_moda[0]:
             menor_moda = item
 
-    print(f"\nPregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
+    print(f"Pregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
     print(f"Pregunta con MENOR valor de moda: {menor_moda[0]} con moda = {menor_moda[1]}")
 
 # función para calcular la pregunta con mayor consenso en esta estructura
@@ -215,7 +237,7 @@ def pregunta_mayor_consenso(temas):
 
     # Mostramos la mejor pregunta encontrada y su porcentaje de consenso
     porcentaje = round(mejor_consenso * 100, 2)
-    print(f"\nPregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
+    print(f"Pregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
     
 # Function to print 
 def ordenar_preguntas(K):
@@ -329,7 +351,7 @@ def pregunta_mayor_extremismo(temas):
                 pregunta_mayor = pregunta_id
 
     if pregunta_mayor is not None:
-        print(f"\nPregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo*100:.2f}%")
+        print(f"Pregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo*100:.2f}%")
     else:
         print("\nNo hay preguntas con extremismo.")
 
@@ -363,17 +385,24 @@ temas = {
 personas = list(encuestados.items())
 print("Lista de encuestados ordenada")
 ordenar_encuestados(personas)
-print("\n")
+print()
 print("Lista de Temas ordenada")
 ordenar_temas(temas, personas)
+print()
+print("Promedio:")
+pregunta_mayor_menor_promedio(temas)
+print()
+print("Moda:")
 pregunta_moda_max_min(temas)
 opiniones = [6, 7, 7, 3, 3]
-print("Moda de las opiniones:")
-print(moda(opiniones))
+print("Moda de las opiniones:",moda(opiniones))
+print()
 print("Mediana:")
 calcular_mediana_por_pregunta(temas)
-print("Coseno:")
+print()
+print("Consenso:")
 pregunta_mayor_consenso(temas)
+print()
 print("Extremismo:")
 pregunta_mayor_extremismo(temas)
 
