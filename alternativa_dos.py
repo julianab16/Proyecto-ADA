@@ -215,30 +215,20 @@ def pregunta_mayor_consenso(temas):
 
     # Mostramos la mejor pregunta encontrada y su porcentaje de consenso
     porcentaje = round(mejor_consenso * 100, 2)
-    print(f"\nPregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
+    print(f"Pregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
     
 # Function to print 
 def ordenar_preguntas(K):
     # K is a dictionary where keys are questions and values are sets of encuestados
     M = K.keys()
-    # Create a list of tuples where each tuple contains the value
-    def obtener_values(key, list):
-        lista = []
-        if key in list:
-            for x in list[key]:
-                lista.append(x)
-        return lista
-    
     # Create a list to store the questions and their corresponding values ordered
     preguntas = []
-
     # Iterate through each question in K
     for x in M:
-        n = obtener_values(x, K)
         # Calcula el promedio
-        promedio = calcular_promedio(n, 2)
+        promedio = calcular_promedio(K[x], 2)
         # Organiza las opniones
-        merged = merge_opiniones(n)
+        merged = merge_opiniones(list(K[x]))
         preguntas.append([promedio, x, merged])
 
     # Sort the preguntas list
@@ -267,7 +257,7 @@ def ordenar_temas(K, encuestados):
                 #Saca los IDs de cada encuestado
                 values += (obtener_llave_por_valor(encuestados, encuestado),)
             #impreme el promedio de prehunta, pregunta y Id de los encuestados
-            print(f"{[pregunta[0]]} {pregunta[1]}: {values}")
+            print(f" {[pregunta[0]]} {pregunta[1]}: {values}")
 
 # Funcion para calcular la mediana
 def calcular_mediana(lista):
@@ -289,18 +279,18 @@ def calcular_mediana_por_pregunta(temas):
             nuevo_array.append((n[1], n[2]))
 
     # Itera el arreglo de nuevo_array 
-    for i, (tema_nombre, op) in enumerate(nuevo_array):
+    for i, (pregunta_nombre, op) in enumerate(nuevo_array):
         # Guarda las opiniones de cada pregunta
         opiniones = [e[2] for e in op]
         # Calcula la mediana
         mediana = calcular_mediana(opiniones)
         # Reemplazar la lista de opiniones por la mediana
-        nuevo_array[i] = (tema_nombre, mediana)  
+        nuevo_array[i] = (pregunta_nombre, mediana)  
 
     # Ordena las medianas
     medianas_ordenadas = merge_medianas(nuevo_array)
     # Mediana mayor y menor
-    mayor_pregunta, mayor= medianas_ordenadas[-1]
+    mayor_pregunta, mayor = medianas_ordenadas[-1]
     menor_pregunta, menor = medianas_ordenadas[0]
     
     print(f"Pregunta con Mayor mediana de opinion: [{mayor}] Pregunta: {mayor_pregunta[9:]}")
@@ -336,15 +326,17 @@ temas = {
 personas = list(encuestados.items())
 print("Lista de encuestados ordenada")
 ordenar_encuestados(personas)
-print("\n")
+print()
 print("Lista de Temas ordenada")
 ordenar_temas(temas, personas)
 pregunta_moda_max_min(temas)
 opiniones = [6, 7, 7, 3, 3]
 print("Moda de las opiniones:")
 print(moda(opiniones))
+print()
 print("Mediana:")
 calcular_mediana_por_pregunta(temas)
+print()
 print("Coseno:")
 pregunta_mayor_consenso(temas)
 

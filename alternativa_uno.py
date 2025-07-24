@@ -126,10 +126,10 @@ class ArbolRojoNegro:
             resultado.append(nodo.id)
             self.recorrido_inorden(nodo.izq, resultado)
 
+# Clase para ordenar las opniones
 class ArbolOpiniones(ArbolRojoNegro):
-    def insertar(self, opinion_valor):
-        # El ID y demás datos no importan aquí, solo la opinión para ordenarla
-        nodo = NodoRB(id_encuestado=opinion_valor, experticia=0, opinion=opinion_valor, nombre=None)
+    def insertarOpiniones(self, encuestado):
+        nodo = NodoRB(encuestado['id'], encuestado['experticia'], encuestado['opinion'], encuestado['nombre'])
         nodo.izq = self.NIL
         nodo.der = self.NIL
         nodo.padre = None
@@ -139,8 +139,8 @@ class ArbolOpiniones(ArbolRojoNegro):
 
         while x != self.NIL:
             y = x
-            # Ordenar ascendente por opinión
-            if nodo.opinion < x.opinion:
+            # Ordenar decente por opinión, y por experticia
+            if nodo.opinion > x.opinion or (nodo.opinion == y.opinion and nodo.experticia > y.experticia):
                 x = x.izq
             else:
                 x = x.der
@@ -148,23 +148,64 @@ class ArbolOpiniones(ArbolRojoNegro):
         nodo.padre = y
         if y is None:
             self.raiz = nodo
-        elif nodo.opinion < y.opinion:
+        elif nodo.opinion > y.opinion or (nodo.opinion == y.opinion and nodo.experticia > y.experticia):
             y.izq = nodo
         else:
             y.der = nodo
 
         nodo.color = 'R'
         self.insertar_fixup(nodo)
-
-def obtener_opiniones_ordenadas(arbol):
+        
+# Recorre el arbol sacando las opniones de las preguntas en un arreglo
+def recorrer_inorden_opniones(arbol):
         resultado = []
-
         def inorden(nodo):
             if nodo != arbol.NIL:
                 inorden(nodo.izq)
                 resultado.append(nodo.opinion)
                 inorden(nodo.der)
+        inorden(arbol.raiz)
+        return resultado
 
+# Clase para ordenar las medianas 
+class ArbolMediadas(ArbolRojoNegro):
+    def insertarMediadas(self, encuestado):
+        # El ID de la pregunta se guarda en el id de encuestado y la mediana en la opnion
+        nodo = NodoRB(id_encuestado=encuestado[0], experticia=0, opinion=encuestado[1], nombre=None)
+        nodo.izq = self.NIL
+        nodo.der = self.NIL
+        nodo.padre = None
+
+        y = None
+        x = self.raiz
+
+        while x != self.NIL:
+            y = x
+            # Ordenar ascendente por mediana y por id
+            if nodo.opinion < x.opinion or (nodo.opinion == y.opinion and nodo.id > y.id):
+                x = x.izq
+            else:
+                x = x.der
+
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+            # Ordenar ascendente por mediana y por id
+        elif nodo.opinion < y.opinion or (nodo.opinion == y.opinion and nodo.id < y.id):
+            y.izq = nodo
+        else:
+            y.der = nodo
+        nodo.color = 'R'
+        self.insertar_fixup(nodo)
+
+# Recorre el arbol sacando los ids y medianas de las preguntas en un arreglo
+def recorrer_inorden_medianas(arbol):
+        resultado = []
+        def inorden(nodo):
+            if nodo != arbol.NIL:
+                inorden(nodo.izq)
+                resultado.append((nodo.opinion, nodo.id))
+                inorden(nodo.der)
         inorden(arbol.raiz)
         return resultado
 
@@ -292,34 +333,32 @@ def calcular_mediana_por_pregunta(temas):
     for tema_nombre in temas:
         tema = temas[tema_nombre]
         for pregunta_id in tema:
+            #Saca los encuestados en una lista
             encuestados = list(tema[pregunta_id])
-            #Saca los opniones en un arreglo
-            opiniones = [e['opinion'] for e in encuestados]
-            resultados[pregunta_id] = opiniones
-
-    medianas = {}
-    for pregunta_id, opiniones in resultados.items():
-        #Ordena los opiniones 
-        arbol = ArbolOpiniones()
-        for op in opiniones:
-            arbol.insertar(op)
-        ordenadas = obtener_opiniones_ordenadas(arbol)
-        #Despues de ordenadas, calcula la mediana
-        mediana = calcular_mediana(ordenadas)
-        medianas[pregunta_id] = mediana
-
+            # Va ordenando las opniones 
+            arbol = ArbolOpiniones()
+            for op in encuestados:
+                arbol.insertarOpiniones(op)
+            # Obtiene los opiniones
+            ordenadas = recorrer_inorden_opniones(arbol)
+            # Calcula la mediana
+            mediana = calcular_mediana(ordenadas)
+            resultados[pregunta_id] = mediana
+    
     # Ordena las mediadas
-    arbol = ArbolOpiniones()
-    for pregunta_id, mediana in medianas.items():
-        arbol.insertar((mediana, pregunta_id))  # Mediana como clave, pregunta como valor
-    ordenadas = obtener_opiniones_ordenadas(arbol)
+    arbol = ArbolMediadas()
+    for pregunta_id, mediana in resultados.items():
+        # Inserta: id = pregunta, opinion = mediana
+        arbol.insertarMediadas((pregunta_id, mediana))
+    # Obtiene las medianas ordendas
+    mediadas_ordenadas = recorrer_inorden_medianas(arbol)
 
     # Mayor y menor
-    menor_mediana, menor_pregunta = ordenadas[0]
-    mayor_mediana, mayor_pregunta = ordenadas[-1]
+    menor_mediana, menor_pregunta = mediadas_ordenadas[0]
+    mayor_mediana, mayor_pregunta = mediadas_ordenadas[-1]
 
     print(f"Pregunta con Mayor mediana de opinion: [{mayor_mediana}] Pregunta: {mayor_pregunta[9:]}")
-    print(f"Pregunta con Menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}")
+    print(f"Pregunta con Menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}") 
 
 
 if __name__ == "__main__":
@@ -376,13 +415,14 @@ if __name__ == "__main__":
     arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
-
+    print()
     moda_opinion = calcular_moda_arbol(arbol)
     print(f"Moda de opiniones en el árbol: {moda_opinion}")
     pregunta_moda_max_min_arn(temas)
     print()
     print("Medianas:")
     calcular_mediana_por_pregunta(temas)
+    print()
     print("Coseno:")
     pregunta_mayor_consenso(temas)
 
