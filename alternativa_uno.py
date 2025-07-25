@@ -224,7 +224,227 @@ def calcular_promedio(lista):
         return 0  # Evita división por cero si la lista está vacía
     return sum(lista) / len(lista)
 
+#####################################################################################
 
+class ArbolOpinionExperticia(ArbolRojoNegro):
+    # Clase para manejar el árbol de opiniones y experticias, que contiene nodos de tipo NodoRB
+    # Cada nodo representa un encuestado con su ID, experticia, opinión y nombre
+    def insertar(self, e):
+        nodo = NodoRB(e["id"], e["experticia"], e["opinion"], e["nombre"])
+        nodo.izq = self.NIL
+        nodo.der = self.NIL
+        nodo.padre = None
+
+        y = None
+        x = self.raiz
+        # Inserta el nodo en el árbol siguiendo el orden por opinión descendente,
+        # luego por experticia descendente, y finalmente por ID ascendente en caso de empate
+        while x != self.NIL:
+            y = x
+            if (
+                nodo.opinion > x.opinion or
+                (nodo.opinion == x.opinion and nodo.experticia > x.experticia) or
+                (nodo.opinion == x.opinion and nodo.experticia == x.experticia and nodo.id < x.id)
+            ):
+                x = x.izq
+            else:
+                x = x.der
+
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+        elif (
+            nodo.opinion > y.opinion or
+            (nodo.opinion == y.opinion and nodo.experticia > y.experticia) or
+            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id < y.id)
+        ):
+            y.izq = nodo
+        else:
+            y.der = nodo
+
+        nodo.color = 'R'
+        self.insertar_fixup(nodo)
+
+    def recorrido_inorden(self, nodo, resultado):
+        if nodo != self.NIL:
+            self.recorrido_inorden(nodo.izq, resultado)
+            resultado.append(nodo.id)
+            self.recorrido_inorden(nodo.der, resultado)
+
+def obtener_datos(encuestados):
+    # Crea un árbol de opiniones y experticias
+    arbol = ArbolOpinionExperticia()
+    for e in encuestados:
+        arbol.insertar(e)
+
+    # Saca los datos
+    opiniones = [e["opinion"] for e in encuestados]
+    experticias = [e["experticia"] for e in encuestados]
+    cantidad = len(encuestados)
+
+    promedio_opinion = calcular_promedio(opiniones)
+    promedio_experticia = calcular_promedio(experticias)
+    # Recorre el árbol para obtener los IDs de los encuestados en orden
+    ids_ordenados = []
+    arbol.recorrido_inorden(arbol.raiz, ids_ordenados)
+    # Devuelve los promedios, cantidad y los IDs ordenados
+    return promedio_opinion, promedio_experticia, cantidad, ids_ordenados
+
+
+class NodoPreguntaRB(NodoRB):
+    # Nodo específico para las preguntas, hereda de NodoRB
+    # Contiene el ID de la pregunta, promedios de opinión y experticia, cantidad de encuestados y una lista de IDs de encuestados   
+    def __init__(self, pregunta_id, promedio_opinion, promedio_experticia, cantidad, encuestados):
+        super().__init__(id_encuestado=None, experticia=promedio_experticia, opinion=promedio_opinion, nombre=None)
+        self.pregunta_id = pregunta_id
+        self.promedio_opinion = promedio_opinion
+        self.promedio_experticia = promedio_experticia
+        self.cantidad = cantidad
+        self.encuestados = encuestados
+
+
+class ArbolPreguntas(ArbolRojoNegro):
+    # Clase para manejar el árbol de preguntas, que contiene nodos de tipo NodoPreguntaRB
+    # Cada nodo representa una pregunta con su ID, promedios de opinión y experticia
+    def __init__(self):
+        super().__init__()
+        self.NIL = NodoPreguntaRB(None, 0, 0, 0, [])
+        self.NIL.color = 'B'
+        self.raiz = self.NIL
+
+    def insertar(self, nodo):
+        y = None
+        x = self.raiz
+        while x != self.NIL:
+            y = x
+            # Orden descendente por promedio_opinion, luego promedio_experticia, luego cantidad, luego pregunta_id ascendente
+            if (nodo.promedio_opinion > x.promedio_opinion or
+                (nodo.promedio_opinion == x.promedio_opinion and nodo.promedio_experticia > x.promedio_experticia) or
+                (nodo.promedio_opinion == x.promedio_opinion and nodo.promedio_experticia == x.promedio_experticia and nodo.cantidad > x.cantidad) or
+                (nodo.promedio_opinion == x.promedio_opinion and nodo.promedio_experticia == x.promedio_experticia and nodo.cantidad == x.cantidad and nodo.pregunta_id < x.pregunta_id)):
+                x = x.izq
+            else:
+                x = x.der
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+        elif (nodo.promedio_opinion > y.promedio_opinion or
+              (nodo.promedio_opinion == y.promedio_opinion and nodo.promedio_experticia > y.promedio_experticia) or
+              (nodo.promedio_opinion == y.promedio_opinion and nodo.promedio_experticia == y.promedio_experticia and nodo.cantidad > y.cantidad) or
+              (nodo.promedio_opinion == y.promedio_opinion and nodo.promedio_experticia == y.promedio_experticia and nodo.cantidad == y.cantidad and nodo.pregunta_id < y.pregunta_id)):
+            y.izq = nodo
+        else:
+            y.der = nodo
+        nodo.color = 'R'
+        self.insertar_fixup(nodo)
+
+    def recorrido(self, nodo, resultado):
+        if nodo != self.NIL:
+            self.recorrido(nodo.izq, resultado)
+            resultado.append(nodo)
+            self.recorrido(nodo.der, resultado)
+
+class NodoTemaRB(NodoRB):
+    # Nodo específico para los temas, hereda de NodoRB
+    def __init__(self, tema_nombre, promedio_opinion, promedio_experticia, cantidad, arbol_preguntas):
+        super().__init__(
+            id_encuestado=None,
+            experticia=promedio_experticia,
+            opinion=promedio_opinion,
+            nombre=tema_nombre)
+        
+        self.tema_nombre = tema_nombre
+        self.promedio_opinion = promedio_opinion
+        self.promedio_experticia = promedio_experticia
+        self.cantidad = cantidad
+        self.arbol_preguntas = arbol_preguntas  
+
+
+class ArbolTemas(ArbolRojoNegro):
+    # Clase para manejar el árbol de temas, que contiene nodos de tipo NodoTemaRB
+    # Cada nodo representa un tema con su nombre, promedios de opinión y experticia, cantidad de preguntas y un árbol de preguntas
+    def __init__(self):
+        self.NIL = NodoTemaRB(None, 0, 0, 0, None)
+        self.NIL.color = 'B'
+        self.raiz = self.NIL
+
+    def insertar(self, nodo):
+        y = None
+        x = self.raiz
+        while x != self.NIL:
+            y = x
+            # Orden descendente por promedio_opinion, luego promedio_experticia, luego cantidad, luego nombre ascendente
+            if (nodo.promedio_opinion > x.promedio_opinion or
+                (nodo.promedio_opinion == x.promedio_opinion and nodo.promedio_experticia > x.promedio_experticia) or
+                (nodo.promedio_opinion == x.promedio_opinion and nodo.promedio_experticia == x.promedio_experticia and nodo.cantidad > x.cantidad) or
+                (nodo.promedio_opinion == x.promedio_opinion and nodo.promedio_experticia == x.promedio_experticia and nodo.cantidad == x.cantidad and nodo.tema_nombre < x.tema_nombre)):
+                x = x.izq
+            else:
+                x = x.der
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+        elif (nodo.promedio_opinion > y.promedio_opinion or
+              (nodo.promedio_opinion == y.promedio_opinion and nodo.promedio_experticia > y.promedio_experticia) or
+              (nodo.promedio_opinion == y.promedio_opinion and nodo.promedio_experticia == y.promedio_experticia and nodo.cantidad > y.cantidad) or
+              (nodo.promedio_opinion == y.promedio_opinion and nodo.promedio_experticia == y.promedio_experticia and nodo.cantidad == y.cantidad and nodo.tema_nombre < y.tema_nombre)):
+            y.izq = nodo
+        else:
+            y.der = nodo
+        nodo.color = 'R'
+        self.insertar_fixup(nodo)
+
+    def recorrido(self, nodo, resultado):
+        if nodo != self.NIL:
+            self.recorrido(nodo.izq, resultado)
+            resultado.append(nodo)
+            self.recorrido(nodo.der, resultado)
+
+def temas_ordenados(temas):
+    arbol_temas = ArbolTemas()
+    # Recorre los temas y crea un árbol de preguntas para cada uno
+    # Calcula los promedios de opinión y experticia, y la cantidad total de encuestados
+    for tema_nombre, preguntas in temas.items():
+        # Crea un árbol de preguntas para el tema actual
+        arbol_preguntas = ArbolPreguntas()
+        # Recorre las preguntas del tema y obtiene los datos necesarios para crear nodos de tipo NodoPreguntaRB
+        for pregunta_id, encuestados in preguntas.items():
+            # Obtiene los datos necesarios para el nodo de pregunta
+            # Calcula los promedios de opinión y experticia, y la cantidad total de
+            prom_op, prom_exp, cantidad, ids = obtener_datos(encuestados)
+            nodo_pregunta = NodoPreguntaRB(pregunta_id, prom_op, prom_exp, cantidad, ids)
+            nodo_pregunta.izq = arbol_preguntas.NIL
+            nodo_pregunta.der = arbol_preguntas.NIL
+            arbol_preguntas.insertar(nodo_pregunta)
+        preguntas_lista = []
+        # Recorre el árbol de preguntas y obtiene los promedios y cantidad total
+        arbol_preguntas.recorrido(arbol_preguntas.raiz, preguntas_lista)
+        promedio_opinion_tema = calcular_promedio([p.promedio_opinion for p in preguntas_lista])
+        promedio_experticia_tema = calcular_promedio([p.promedio_experticia for p in preguntas_lista])
+        cantidad_total = sum(p.cantidad for p in preguntas_lista)
+        # Crea un nodo de tema con los promedios y el árbol de preguntas y lo inserta en el árbol de temas
+        nodo_tema = NodoTemaRB(
+            tema_nombre,
+            promedio_opinion_tema,
+            promedio_experticia_tema,
+            cantidad_total,
+            arbol_preguntas )
+        nodo_tema.izq = arbol_temas.NIL
+        nodo_tema.der = arbol_temas.NIL
+        arbol_temas.insertar(nodo_tema)
+    # Recorre el árbol de temas y muestra los resultados
+    temas_lista = []
+    arbol_temas.recorrido(arbol_temas.raiz, temas_lista)
+    for tema in temas_lista:
+        # Imprime el nombre del tema, su promedio de opinión y el árbol de preguntas asociado  
+        print(f"[{tema.promedio_opinion:.2f}] {tema.tema_nombre}")
+        preguntas_ordenadas = []
+        # Recorre el árbol de preguntas del tema y obtiene los nodos ordenados
+        tema.arbol_preguntas.recorrido(tema.arbol_preguntas.raiz, preguntas_ordenadas)
+        for pregunta in preguntas_ordenadas:
+            print(f"[{pregunta.promedio_opinion:.2f}] {pregunta.pregunta_id}: {tuple(pregunta.encuestados)}")
+
+# Función para la pregunta con mayor y menor promedio
 def pregunta_mayor_menor_promedio(temas):
     resultados = []
     for tema_nombre in temas:
@@ -469,6 +689,9 @@ if __name__ == "__main__":
     print("Lista de encuestados ordenada por experticia descendente y ID:")
     print(lista_encuestados[::-1])
     print()
+    print("Lista de Temas ordenada:")
+    temas_ordenados(temas)
+    print()
     print("Promedios:")
     pregunta_mayor_menor_promedio(temas)
     print()
@@ -483,6 +706,10 @@ if __name__ == "__main__":
     print()
     print("Extremismo:")
     pregunta_mayor_extremismo(temas)
+
+    
+
+
     
 
 
