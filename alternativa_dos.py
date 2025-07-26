@@ -367,12 +367,3 @@ encuestados = {
 }
 
 personas = list(encuestados.items())
-
-
-"""
-Dado que los valores de cada encuestado son una tupla,
-se puede acceder a ellos como encuestados[1][0] para el nombre, 
-encuestados[1][1] para la experticia y encuestados[1][2] para la opinión.
-
-Si vas a camnbiar algo en el código, asegúrate de comentarlo y escribir por el grupo.
-"""

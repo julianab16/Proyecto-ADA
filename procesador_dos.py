@@ -41,6 +41,7 @@ def procesar_archivo_dos(nombre_archivo,salida_archivo):
     pregunta_actual = 1
     temas[f"Tema {tema_actual}"] = {}
     
+
     for linea in lineas[linea_division:]:
         linea = linea.strip()
         if not linea:
