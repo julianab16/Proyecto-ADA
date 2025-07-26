@@ -244,7 +244,7 @@ class ArbolOpinionExperticia(ArbolRojoNegro):
             if (
                 nodo.opinion > x.opinion or
                 (nodo.opinion == x.opinion and nodo.experticia > x.experticia) or
-                (nodo.opinion == x.opinion and nodo.experticia == x.experticia and nodo.id < x.id)
+                (nodo.opinion == x.opinion and nodo.experticia == x.experticia and nodo.id > x.id)
             ):
                 x = x.izq
             else:
@@ -256,7 +256,7 @@ class ArbolOpinionExperticia(ArbolRojoNegro):
         elif (
             nodo.opinion > y.opinion or
             (nodo.opinion == y.opinion and nodo.experticia > y.experticia) or
-            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id < y.id)
+            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id > y.id)
         ):
             y.izq = nodo
         else:
