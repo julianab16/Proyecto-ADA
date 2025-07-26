@@ -36,7 +36,7 @@ Pregunta con mayor promedio de opinion: Pregunta 1.1 con promedio = 7.00
 Pregunta con menor promedio de opinion: Pregunta 2.2 con promedio = 4.67
 Pregunta con mayor mediana de opinion: [7] Pregunta: 2.1
 Pregunta con menor mediana de opinion: [4] Pregunta: 2.2
-Pregunta con mayor moda de opinion: [7] Pregunta 2.1
-Pregunta con menor moda de opinion: [0] Pregunta 2.2
-Pregunta con mayor extremismo: Pregunta 2.2 con 66.67%
-Pregunta con mayor consenso: Pregunta 1.1 con 66.67%
+Pregunta con mayor moda de opinion: [7] Pregunta: 2.1
+Pregunta con menor moda de opinion: [0] pregunta: 2.2
+Pregunta con mayor extremismo: [0.67] Pregunta: 2.2
+Pregunta con mayor consenso: [0.67] Pregunta: 1.1

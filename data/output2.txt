@@ -34,9 +34,9 @@ Lista de encuestados:
 Resultados:
 Pregunta con MAYOR promedio de opinion: Pregunta 1.1 con promedio = 7.00
 Pregunta con MENOR promedio de opinion: Pregunta 2.2 con promedio = 4.67
-Pregunta con MAYOR moda: Pregunta 2.1 con moda = 7
-Pregunta con MENOR moda: Pregunta 2.2 con moda = 0
-Pregunta con Mayor mediana de opinion: [7] Pregunta: 2.1
-Pregunta con Menor mediana de opinion: [4] Pregunta: 2.2
-Pregunta con MAYOR CONSENSO: Pregunta 1.1 con 66.67% de opiniones iguales a la moda
-Pregunta con MAYOR extremismo: Pregunta 2.2 con extremismo = 66.67%
+Pregunta con mayor moda de opinion: [7] Pregunta: 2.1
+Pregunta con menor moda de opinion: [0] Pregunta: 2.2
+Pregunta con mayor mediana de opinion: [7] Pregunta: 2.1
+Pregunta con menor mediana de opinion: [4] Pregunta: 2.2
+Pregunta con mayor consenso: [0.67] Pregunta: 1.1
+Pregunta con mayor extremismo: [0.67] Pregunta: 2.2
