@@ -466,8 +466,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(resultados, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(resultados, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con MAYOR promedio de opinion: {mayor[0]} con promedio = {mayor[1]:.2f}")
-    print(f"Pregunta con MENOR promedio de opinion: {menor[0]} con promedio = {menor[1]:.2f}")
+    print(f"Pregunta con mayor promedio de opinion: {mayor[1]:.2f} Pregunta: {mayor[0]}")
+    print(f"Pregunta con menor promedio de opinion: {menor[1]:.2f} Pregunta: {menor[0]}")
 
 
 # Calcula la moda de una lista, devolviendo la menor si hay empate
@@ -538,8 +538,8 @@ def pregunta_moda_max_min_arn(temas):
         elif r[1] == menor[1] and r[0] < menor[0]:  # menor ID si empate
             menor = r
 
-    print(f"Pregunta con MAYOR moda: {mayor[0]} con moda = {mayor[1]}")
-    print(f"Pregunta con MENOR moda: {menor[0]} con moda = {menor[1]}")
+    print(f"Pregunta con mayor moda de opinion: {mayor[1]} Pregunta: {mayor[0]}")
+    print(f"Pregunta con menor moda de opinion: {menor[1]} Pregunta: {menor[0]}")
     
 def pregunta_mayor_consenso(temas):
  # Inicializamos variables para guardar la mejor pregunta y el mayor porcentaje de consenso encontrado   
@@ -571,7 +571,7 @@ def pregunta_mayor_consenso(temas):
     
     # Imprimimos la pregunta con mayor consenso y su porcentaje (redondeado)
     porcentaje = round(mejor_consenso * 100, 2)
-    print(f"Pregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
+    print(f"Pregunta con mayor consenso: {mejor_pregunta} con {porcentaje}%")
    
 # Funcion para calcular la mediana
 def calcular_mediana(lista):
@@ -610,8 +610,8 @@ def calcular_mediana_por_pregunta(temas):
     menor_mediana, menor_pregunta = mediadas_ordenadas[0]
     mayor_mediana, mayor_pregunta = mediadas_ordenadas[-1]
 
-    print(f"Pregunta con Mayor mediana de opinion: [{mayor_mediana}] Pregunta: {mayor_pregunta[9:]}")
-    print(f"Pregunta con Menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}") 
+    print(f"Pregunta con mayor mediana de opinion: [{mayor_mediana}] Pregunta: {mayor_pregunta[9:]}")
+    print(f"Pregunta con menor mediana de opinion: [{menor_mediana}] Pregunta: {menor_pregunta[9:]}") 
 
 def pregunta_mayor_extremismo(temas):
     # Inicializa variables para guardar el mayor porcentaje de extremismo y la pregunta correspondiente
@@ -634,7 +634,7 @@ def pregunta_mayor_extremismo(temas):
                 pregunta_mayor = pregunta_id
     # Imprime el resultado si se encontró alguna pregunta con encuestados
     if pregunta_mayor is not None:
-        print(f"Pregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo}")
+        print(f"Pregunta con mayor extremismo: {pregunta_mayor} con {mayor_extremismo}")
     else:
         print("No hay preguntas con extremismo.")
 

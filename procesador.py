@@ -90,8 +90,8 @@ def procesar_archivo_uno(nombre_archivo,salida_archivo):
         pregunta_mayor_menor_promedio(temas)
         pregunta_moda_max_min_arn(temas)
         calcular_mediana_por_pregunta(temas)
-        pregunta_mayor_consenso(temas)
         pregunta_mayor_extremismo(temas)
+        pregunta_mayor_consenso(temas)
 
 
         sys.stdout = original_stdout  # Restaura stdout
