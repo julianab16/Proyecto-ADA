@@ -447,7 +447,7 @@ def temas_ordenados(temas):
         # Recorre el árbol de preguntas del tema y obtiene los nodos ordenados
         tema.arbol_preguntas.recorrido(tema.arbol_preguntas.raiz, preguntas_ordenadas)
         for pregunta in preguntas_ordenadas:
-            print(f"[{pregunta.promedio_opinion:.2f}] {pregunta.pregunta_id}: {tuple(pregunta.encuestados)}")
+            print(f" [{pregunta.promedio_opinion:.2f}] {pregunta.pregunta_id}: {tuple(pregunta.encuestados)}")
 
 # Función para la pregunta con mayor y menor promedio
 def pregunta_mayor_menor_promedio(temas):
@@ -466,8 +466,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(resultados, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(resultados, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con MAYOR promedio de opinion: {mayor[0]} con promedio = {mayor[1]:.2f}")
-    print(f"Pregunta con MENOR promedio de opinion: {menor[0]} con promedio = {menor[1]:.2f}")
+    print(f"Pregunta con mayor promedio de opinion: [{mayor[1]:.2f}] Pregunta: {mayor[0][9:]}")
+    print(f"Pregunta con menor promedio de opinion: [{menor[1]:.2f}] Pregunta: {menor[0][9:]}")
 
 
 # Calcula la moda de una lista, devolviendo la menor si hay empate
@@ -540,6 +540,7 @@ def pregunta_moda_max_min_arn(temas):
 
     print(f"Pregunta con mayor moda de opinion: [{mayor[1]}] Pregunta: {mayor[0][9:]}")
     print(f"Pregunta con menor moda de opinion: [{menor[1]}] Pregunta: {menor[0][9:]}")
+
     
 def pregunta_mayor_consenso(temas):
  # Inicializamos variables para guardar la mejor pregunta y el mayor porcentaje de consenso encontrado   
@@ -569,9 +570,8 @@ def pregunta_mayor_consenso(temas):
                 mejor_consenso = consenso
                 mejor_pregunta = pregunta_id
     
-    # Imprimimos la pregunta con mayor consenso y su porcentaje (redondeado)
-    porcentaje = round(mejor_consenso * 100, 2)
     print(f"Pregunta con mayor consenso: [{mejor_consenso:.2f}] Pregunta: {mejor_pregunta[9:]}")
+
    
 # Funcion para calcular la mediana
 def calcular_mediana(lista):
@@ -635,6 +635,7 @@ def pregunta_mayor_extremismo(temas):
     # Imprime el resultado si se encontró alguna pregunta con encuestados
     if pregunta_mayor is not None:
         print(f"Pregunta con mayor extremismo: [{mayor_extremismo:.2f}] Pregunta: {pregunta_mayor[9:]}")
+
     else:
         print("No hay preguntas con extremismo.")
 
