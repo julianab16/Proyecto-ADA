@@ -1,0 +1,20 @@
+Resultados de la encuesta:
+[8.25] Tema 1
+[9.50] Pregunta 1.1: (2, 10)
+[7.00] Pregunta 1.2: (6, 12, 1, 9)
+[3.67] Tema 2
+[7.00] Pregunta 2.2: (8, 7, 11)
+[0.33] Pregunta 2.1: (4, 3, 5)
+
+Lista de encuestados:
+[4, 3, 6, 9, 5, 2, 12, 8, 10, 7, 11, 1]
+
+Resultados:
+Pregunta con MAYOR promedio: Pregunta 1.1 con promedio = 9.50
+Pregunta con MENOR promedio: Pregunta 2.1 con promedio = 0.33
+Pregunta con MAYOR moda: Pregunta 1.1 con moda = 9
+Pregunta con MENOR moda: Pregunta 2.1 con moda = 0
+Pregunta con Mayor mediana de opinion: [9] Pregunta: 1.1
+Pregunta con Menor mediana de opinion: [0] Pregunta: 2.1
+Pregunta con MAYOR CONSENSO: Pregunta 2.2 con 100.0% de opiniones iguales a la moda
+Pregunta con MAYOR extremismo: Pregunta 2.1 con extremismo = 66.67%

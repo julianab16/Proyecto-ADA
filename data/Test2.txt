@@ -18,9 +18,12 @@ Juan Álvarez, Experticia: 8, Opinión: 0
 Felipe Mendoza, Experticia: 9, Opinión: 8
 Gloria Ramírez, Experticia: 3, Opinión: 7
 Héctor Orozco, Experticia: 2, Opinión: 6
+
 {2,20,3}
 {9,1,8}
+
 {11,4,6,5}
 {10,12,7}
+
 {19,13,15}
 {16,17,18,14}

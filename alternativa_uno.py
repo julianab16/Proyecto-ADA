@@ -634,11 +634,22 @@ def pregunta_mayor_extremismo(temas):
         print("No hay preguntas con extremismo.")
 
 
+def construir_arbol_y_recorrer(datos):
+    arbol = ArbolRojoNegro()
+    for d in datos:
+        arbol.insertar(d)
+    
+    lista_encuestados = []
+    arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
+    print(lista_encuestados[::-1])
+    
+    return arbol, lista_encuestados 
+
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
     arbol = ArbolRojoNegro()
     arbol_opiniones = ArbolOpiniones()
-    datos = [
+    datos1 = [
         {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
         {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"},
         {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
@@ -653,7 +664,31 @@ if __name__ == "__main__":
         {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"}
     ]
 
-    temas = {
+    datos = [
+    {"id": 1, "experticia": 5, "opinion": 8, "nombre": "Diego Morales"},
+    {"id": 2, "experticia": 8, "opinion": 6, "nombre": "Laura Jiménez"},
+    {"id": 3, "experticia": 10, "opinion": 9, "nombre": "Pedro Suárez"},
+    {"id": 4, "experticia": 4, "opinion": 0, "nombre": "Carolina Rojas"},
+    {"id": 5, "experticia": 6, "opinion": 7, "nombre": "Andrés Cárdenas"},
+    {"id": 6, "experticia": 7, "opinion": 8, "nombre": "Marcela Gómez"},
+    {"id": 7, "experticia": 9, "opinion": 4, "nombre": "Pablo Castillo"},
+    {"id": 8, "experticia": 2, "opinion": 1, "nombre": "Diana Martínez"},
+    {"id": 9, "experticia": 1, "opinion": 6, "nombre": "Santiago Reyes"},
+    {"id": 10, "experticia": 8, "opinion": 0, "nombre": "María Cano"},
+    {"id": 11, "experticia": 3, "opinion": 7, "nombre": "Ana Mejía"},
+    {"id": 12, "experticia": 10, "opinion": 10, "nombre": "Luis Vargas"},
+    {"id": 13, "experticia": 6, "opinion": 1, "nombre": "Verónica López"},
+    {"id": 14, "experticia": 5, "opinion": 4, "nombre": "Daniela Torres"},
+    {"id": 15, "experticia": 7, "opinion": 6, "nombre": "Ricardo Pérez"},
+    {"id": 16, "experticia": 4, "opinion": 9, "nombre": "Jessica Sandoval"},
+    {"id": 17, "experticia": 8, "opinion": 0, "nombre": "Juan Álvarez"},
+    {"id": 18, "experticia": 9, "opinion": 8, "nombre": "Felipe Mendoza"},
+    {"id": 19, "experticia": 3, "opinion": 7, "nombre": "Gloria Ramírez"},
+    {"id": 20, "experticia": 2, "opinion": 6, "nombre": "Héctor Orozco"}
+]
+
+
+    temas1 = {
         
     "Tema 1": {
         "Pregunta 1.1": [
@@ -678,6 +713,47 @@ if __name__ == "__main__":
             {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
             {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"}
         ]}
+    }
+
+    temas = {
+        "Tema 1": {
+            "Pregunta 1.1": [
+                {"id": 2, "experticia": 8, "opinion": 6, "nombre": "Laura Jiménez"},
+                {"id": 20, "experticia": 2, "opinion": 6, "nombre": "Héctor Orozco"},
+                {"id": 3, "experticia": 10, "opinion": 9, "nombre": "Pedro Suárez"}
+            ],
+            "Pregunta 1.2": [
+                {"id": 9, "experticia": 1, "opinion": 6, "nombre": "Santiago Reyes"},
+                {"id": 1, "experticia": 5, "opinion": 8, "nombre": "Diego Morales"},
+                {"id": 8, "experticia": 2, "opinion": 1, "nombre": "Diana Martínez"}
+            ]
+        },
+        "Tema 2": {
+            "Pregunta 2.1": [
+                {"id": 11, "experticia": 3, "opinion": 7, "nombre": "Ana Mejía"},
+                {"id": 4, "experticia": 4, "opinion": 0, "nombre": "Carolina Rojas"},
+                {"id": 6, "experticia": 7, "opinion": 8, "nombre": "Marcela Gómez"},
+                {"id": 5, "experticia": 6, "opinion": 7, "nombre": "Andrés Cárdenas"}
+            ],
+            "Pregunta 2.2": [
+                {"id": 10, "experticia": 8, "opinion": 0, "nombre": "María Cano"},
+                {"id": 12, "experticia": 10, "opinion": 10, "nombre": "Luis Vargas"},
+                {"id": 7, "experticia": 9, "opinion": 4, "nombre": "Pablo Castillo"}
+            ]
+        },
+        "Tema 3": {
+            "Pregunta 3.1": [
+                {"id": 19, "experticia": 3, "opinion": 7, "nombre": "Gloria Ramírez"},
+                {"id": 13, "experticia": 6, "opinion": 1, "nombre": "Verónica López"},
+                {"id": 15, "experticia": 7, "opinion": 6, "nombre": "Ricardo Pérez"}
+            ],
+            "Pregunta 3.2": [
+                {"id": 16, "experticia": 4, "opinion": 9, "nombre": "Jessica Sandoval"},
+                {"id": 17, "experticia": 8, "opinion": 0, "nombre": "Juan Álvarez"},
+                {"id": 18, "experticia": 9, "opinion": 8, "nombre": "Felipe Mendoza"},
+                {"id": 14, "experticia": 5, "opinion": 4, "nombre": "Daniela Torres"}
+            ]
+        }
     }
 
 
@@ -706,12 +782,6 @@ if __name__ == "__main__":
     print()
     print("Extremismo:")
     pregunta_mayor_extremismo(temas)
-
-    
-
-
-    
-
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 

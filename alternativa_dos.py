@@ -90,27 +90,9 @@ def merge_medianas(lista):
 
 # Function outs the list of IDs ordered
 def ordenar_encuestados(arr):
-    nuevo_arr = []
     merged = merge_encuestados(arr)
-    for i in merged:
-        nuevo_arr.append(i[0])
-    print(nuevo_arr)
-
-# Function to calculate the average
-def calcular_promedio(list, j):
-    n = 0
-    for i in list:
-        n += i[j]
-    promedio = n / len(list)
-    promedio_redondeado = round(promedio, 2)
-    return promedio_redondeado
-
-# Function to get the key from a value in a dictionary
-def obtener_llave_por_valor(diccionario, valor_buscado):
-    for llave, valor in diccionario:
-        if valor == valor_buscado:
-            return llave
-    return None
+    for id, (nombre, experticia, opinion) in merged:
+        print(f"({id}, Nombre: {nombre}, Experticia: {experticia}, Opinión: {opinion})")
 
 def insertionsort(arr):
     n = len(arr)  # Get the length of the array
@@ -124,6 +106,40 @@ def insertionsort(arr):
             j -= 1
         arr[j+1] = key  # Insert the key in the correct position
     return arr  # Return the sorted array
+
+# Function to calculate the average
+def calcular_promedio(list, j):
+    n = 0
+    for i in list:
+        n += i[j]
+    promedio = n / len(list)
+    promedio_redondeado = round(promedio, 2)
+    return promedio_redondeado
+
+# Function to print the question in order
+def ordenar_preguntas(K):
+    # K is a dictionary where keys are questions and values are sets of encuestados
+    M = K.keys()
+    # Create a list to store the questions and their corresponding values ordered
+    preguntas = []
+    # Iterate through each question in K
+    for x in M:
+        # Calcula el promedio
+        promedio = calcular_promedio(K[x], 2)
+        # Organiza las opniones
+        merged = merge_opiniones(list(K[x]))
+        preguntas.append([promedio, x, merged])
+
+    # Sort the preguntas list
+    preguntas_organizadas = insertionsort(preguntas)
+    return preguntas_organizadas
+
+# Function to get the key from a value in a dictionary
+def obtener_llave_por_valor(diccionario, valor_buscado):
+    for llave, valor in diccionario:
+        if valor == valor_buscado:
+            return llave
+    return None
 
 # Ordena los temas por promedio de preguntas
 def ordenar_temas(K, encuestados):
@@ -140,15 +156,15 @@ def ordenar_temas(K, encuestados):
     temas_organizados = insertionsort(nuevo_arr)
     for tema in temas_organizados:
         #improme promedio y tema
-        print(f"{[tema[0]]} {tema[1]}")
+        print(f"[{tema[0]:.2f}] {tema[1]}")
         for pregunta in tema[2]:
             values = ()
             for encuestado in pregunta[2]:
                 #Saca los IDs de cada encuestado
                 values += (obtener_llave_por_valor(encuestados, encuestado),)
             #impreme el promedio de prehunta, pregunta y Id de los encuestados
-            print(f" {[pregunta[0]]} {pregunta[1]}: {values}")
-            
+            print(f" [{pregunta[0]:.2f}] {pregunta[1]}: {values}")
+
 # Función para encontrar la pregunta con mayor y menor promedio de las opiniones
 def pregunta_mayor_menor_promedio(temas):
     promedios = []
@@ -167,8 +183,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(promedios, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(promedios, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con MAYOR promedio: {mayor[0]} con promedio = {mayor[1]:.2f}")
-    print(f"Pregunta con MENOR promedio: {menor[0]} con promedio = {menor[1]:.2f}")
+    print(f"Pregunta con mayor promedio de opinion: [{mayor[1]:.2f}] {mayor[0]}")
+    print(f"Pregunta con menor promedio de opinion: [{menor[1]:.2f}] {menor[0]}")
 
 
 # funcion moda que calcula la moda de una lista
@@ -224,8 +240,8 @@ def pregunta_moda_max_min(temas):
         elif item[1] == menor_moda[1] and item[0] < menor_moda[0]:
             menor_moda = item
 
-    print(f"Pregunta con MAYOR valor de moda: {mayor_moda[0]} con moda = {mayor_moda[1]}")
-    print(f"Pregunta con MENOR valor de moda: {menor_moda[0]} con moda = {menor_moda[1]}")
+    print(f"Pregunta con mayor moda de opinion: [{mayor_moda[1]}] {mayor_moda[0]}")
+    print(f"Pregunta con menor moda de opinion: [{menor_moda[1]}] {menor_moda[0]}")
 
 # función para calcular la pregunta con mayor consenso en esta estructura
 def pregunta_mayor_consenso(temas):
@@ -261,26 +277,8 @@ def pregunta_mayor_consenso(temas):
 
     # Mostramos la mejor pregunta encontrada y su porcentaje de consenso
     porcentaje = round(mejor_consenso * 100, 2)
-    print(f"Pregunta con MAYOR CONSENSO: {mejor_pregunta} con {porcentaje}% de opiniones iguales a la moda")
+    print(f"Pregunta con mayor consenso: {mejor_pregunta} con {porcentaje}%")
     
-# Function to print 
-def ordenar_preguntas(K):
-    # K is a dictionary where keys are questions and values are sets of encuestados
-    M = K.keys()
-    # Create a list to store the questions and their corresponding values ordered
-    preguntas = []
-    # Iterate through each question in K
-    for x in M:
-        # Calcula el promedio
-        promedio = calcular_promedio(K[x], 2)
-        # Organiza las opniones
-        merged = merge_opiniones(list(K[x]))
-        preguntas.append([promedio, x, merged])
-
-    # Sort the preguntas list
-    preguntas_organizadas = insertionsort(preguntas)
-    return preguntas_organizadas
-
 # Funcion para calcular la mediana
 def calcular_mediana(lista):
     n = len(lista)
@@ -315,8 +313,8 @@ def calcular_mediana_por_pregunta(temas):
     mayor_pregunta, mayor = medianas_ordenadas[-1]
     menor_pregunta, menor = medianas_ordenadas[0]
     
-    print(f"Pregunta con Mayor mediana de opinion: [{mayor}] Pregunta: {mayor_pregunta[9:]}")
-    print(f"Pregunta con Menor mediana de opinion: [{menor}] Pregunta: {menor_pregunta[9:]}")
+    print(f"Pregunta con mayor mediana de opinion: [{mayor}] Pregunta: {mayor_pregunta[9:]}")
+    print(f"Pregunta con menor mediana de opinion: [{menor}] Pregunta: {menor_pregunta[9:]}")
 
 def pregunta_mayor_extremismo(temas):
     """
@@ -341,58 +339,35 @@ def pregunta_mayor_extremismo(temas):
                 pregunta_mayor = pregunta_id
 
     if pregunta_mayor is not None:
-        print(f"Pregunta con MAYOR extremismo: {pregunta_mayor} con extremismo = {mayor_extremismo*100:.2f}%")
+        print(f"Pregunta con mayor extremismo: {pregunta_mayor} con {mayor_extremismo*100:.2f}%")
     else:
         print("\nNo hay preguntas con extremismo.")
 
-
 encuestados = {
-    1: ("Sofia García", 1, 6),
-    2: ("Alejandro Torres", 7, 10),
-    3: ("Valentina Rodriguez", 9, 0),
-    4: ("Juan Lopéz", 10, 1),
-    5: ("Martina Martinez", 7, 0),
-    6: ("Sebastian Perez", 8, 9),
-    7: ("Camila Fernandez", 2, 7),
-    8: ("Mateo Gonzalez", 4, 7),
-    9: ("Isabella Díaz", 7, 5),
-    10: ("Daniel Ruiz", 2, 9),
-    11: ("Luciana Sanchez", 1, 7),
-    12: ("Lucas Vasquez", 6, 8)
+    1: ("Diego Morales", 5, 8),
+    2: ("Laura Jiménez", 8, 6),
+    3: ("Pedro Suárez", 10, 9),
+    4: ("Carolina Rojas", 4, 0),
+    5: ("Andrés Cárdenas", 6, 7),
+    6: ("Marcela Gómez", 7, 8),
+    7: ("Pablo Castillo", 9, 4),
+    8: ("Diana Martínez", 2, 1),
+    9: ("Santiago Reyes", 1, 6),
+    10: ("María Cano", 8, 0),
+    11: ("Ana Mejía", 3, 7),
+    12: ("Luis Vargas", 10, 10),
+    13: ("Verónica López", 6, 1),
+    14: ("Daniela Torres", 5, 4),
+    15: ("Ricardo Pérez", 7, 6),
+    16: ("Jessica Sandoval", 4, 9),
+    17: ("Juan Álvarez", 8, 0),
+    18: ("Felipe Mendoza", 9, 8),
+    19: ("Gloria Ramírez", 3, 7),
+    20: ("Héctor Orozco", 2, 6)
 }
 
-tema_1 = {
-    "Pregunta 1.1": {encuestados[10], encuestados[2]},
-    "Pregunta 1.2": {encuestados[1], encuestados[9], encuestados[12], encuestados[6]}}
-tema_2 = {
-    "Pregunta 2.1": {encuestados[11], encuestados[8], encuestados[7]},
-    "Pregunta 2.2": {encuestados[3], encuestados[4], encuestados[5]}}
-
-temas = {
-    "Tema 1": tema_1,
-    "Tema 2": tema_2}
-
 personas = list(encuestados.items())
-print("Lista de encuestados ordenada")
-ordenar_encuestados(personas)
-print()
-print("Lista de Temas ordenada")
-ordenar_temas(temas, personas)
-print()
-print("Promedio:")
-pregunta_mayor_menor_promedio(temas)
-print()
-print("Moda:")
-pregunta_moda_max_min(temas)
-print()
-print("Mediana:")
-calcular_mediana_por_pregunta(temas)
-print()
-print("Consenso:")
-pregunta_mayor_consenso(temas)
-print()
-print("Extremismo:")
-pregunta_mayor_extremismo(temas)
+
 
 """
 Dado que los valores de cada encuestado son una tupla,
