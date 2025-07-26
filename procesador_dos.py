@@ -73,8 +73,8 @@ def procesar_archivo_dos(nombre_archivo,salida_archivo):
         print()
         print("Resultados:")
         pregunta_mayor_menor_promedio(temas)
+        calcular_mediana_por_pregunta(temas, list(encuestados.items()))
         pregunta_moda_max_min(temas)
-        calcular_mediana_por_pregunta(temas)
         pregunta_mayor_extremismo(temas)
         pregunta_mayor_consenso(temas)
 

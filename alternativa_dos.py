@@ -1,4 +1,3 @@
-
 # Function to merge and sort encuestados based on Experticia and ID
 def merge_encuestados(lista):
     if len(lista) <= 1:
@@ -32,8 +31,15 @@ def merge_encuestados(lista):
 
     return merge_sorted(merge_encuestados(lista[:mid]),  merge_encuestados(lista[mid:]))
 
+# Function to get the key from a value in a dictionary
+def obtener_llave_por_valor(diccionario, valor_buscado):
+    for llave, valor in diccionario:
+        if valor == valor_buscado:
+            return llave
+    return None
+
 # Function to merge and sort preguntas based on Experticia and Opinión
-def merge_opiniones(lista):
+def merge_opiniones(lista, encuestados):
         if len(lista) <= 1:
             return lista
         mid = len(lista) // 2
@@ -47,7 +53,7 @@ def merge_opiniones(lista):
                     left.pop(0)
                 elif left[0][2] == right[0][2]:
                     # If are the same compare the Experticia of the tuples
-                    if left[0][1] > right[0][1]:
+                    if left[0][1] > right[0][1] or (left[0][1] == right[0][1] and (obtener_llave_por_valor(encuestados, left[0]) < (obtener_llave_por_valor(encuestados, right[0])))):
                         merged.append(left[0])
                         left.pop(0)
                     else:
@@ -61,7 +67,7 @@ def merge_opiniones(lista):
             if right:
                 merged +=right
             return merged
-        return merge_sorted(merge_opiniones(lista[:mid]),  merge_opiniones(lista[mid:]))
+        return merge_sorted(merge_opiniones(lista[:mid], encuestados),  merge_opiniones(lista[mid:], encuestados))
 
 # Merge que ordena las medianas
 def merge_medianas(lista):
@@ -101,7 +107,10 @@ def insertionsort(arr):
     for i in range(1, n):  # Iterate over the array starting from the second element
         key = arr[i]  # Store the current element as the key to be inserted in the right position
         j = i-1
-        while j >= 0 and key[0] > arr[j][0]:  # Move elements greater than key one position ahead
+        while j >= 0 and (key[0] > arr[j][0] or
+            (key[0] == arr[j][0] and key[1] > arr[j][1]) or
+            (key[0] == arr[j][0] and key[1] == arr[j][1] and key[2] > arr[j][2])
+        ):  # Move elements greater than key one position ahead
             arr[j+1] = arr[j] # Shift elements to the right
             j -= 1
         arr[j+1] = key  # Insert the key in the correct position
@@ -113,11 +122,10 @@ def calcular_promedio(list, j):
     for i in list:
         n += i[j]
     promedio = n / len(list)
-    promedio_redondeado = round(promedio, 2)
-    return promedio_redondeado
+    return promedio
 
 # Function to print the question in order
-def ordenar_preguntas(K):
+def ordenar_preguntas(K, encuestados):
     # K is a dictionary where keys are questions and values are sets of encuestados
     M = K.keys()
     # Create a list to store the questions and their corresponding values ordered
@@ -125,45 +133,44 @@ def ordenar_preguntas(K):
     # Iterate through each question in K
     for x in M:
         # Calcula el promedio
-        promedio = calcular_promedio(K[x], 2)
+        promedio_opinion = calcular_promedio(K[x], 2)
         # Organiza las opniones
-        merged = merge_opiniones(list(K[x]))
-        preguntas.append([promedio, x, merged])
+        promedio_expe = calcular_promedio(K[x], 1)
+        merged = merge_opiniones(list(K[x]), encuestados)
+        numero_encuestados = len(merged)
+        preguntas.append([promedio_opinion, promedio_expe, numero_encuestados, x, merged])
 
     # Sort the preguntas list
     preguntas_organizadas = insertionsort(preguntas)
     return preguntas_organizadas
 
-# Function to get the key from a value in a dictionary
-def obtener_llave_por_valor(diccionario, valor_buscado):
-    for llave, valor in diccionario:
-        if valor == valor_buscado:
-            return llave
-    return None
 
 # Ordena los temas por promedio de preguntas
 def ordenar_temas(K, encuestados):
     items = K.items() #Saca las llaves de la lista
     nuevo_arr = []
+
     for tema in items:
         #ordena los preguntas primero
-        nuevo = ordenar_preguntas(tema[1])
+        nuevo = ordenar_preguntas(tema[1], encuestados)
         #calcula el promedio de cada tema
-        promedio = calcular_promedio(nuevo, 0)
-        nuevo_arr.append((promedio, tema[0], nuevo))
+        promedio_opinion = calcular_promedio(nuevo, 0)
+        promedio_expe = calcular_promedio(nuevo, 1)
+        numero_encuestados = sum(e[2] for e in nuevo)
+        nuevo_arr.append([promedio_opinion, promedio_expe, numero_encuestados, tema[0], nuevo])
 
     #ordena cada tema dependiendo de su promedio 
     temas_organizados = insertionsort(nuevo_arr)
     for tema in temas_organizados:
         #improme promedio y tema
-        print(f"[{tema[0]:.2f}] {tema[1]}")
-        for pregunta in tema[2]:
+        print(f"[{tema[0]:.2f}] {tema[3]}")
+        for pregunta in tema[-1]:
             values = ()
-            for encuestado in pregunta[2]:
+            for encuestado in pregunta[-1]:
                 #Saca los IDs de cada encuestado
                 values += (obtener_llave_por_valor(encuestados, encuestado),)
             #impreme el promedio de prehunta, pregunta y Id de los encuestados
-            print(f" [{pregunta[0]:.2f}] {pregunta[1]}: {values}")
+            print(f" [{pregunta[0]:.2f}] {pregunta[3]}: {values}")
 
 # Función para encontrar la pregunta con mayor y menor promedio de las opiniones
 def pregunta_mayor_menor_promedio(temas):
@@ -288,15 +295,15 @@ def calcular_mediana(lista):
         return (lista[n // 2 - 1] + lista[n // 2]) // 2
     
 # Funcion que calcula la mediana mayor y menor
-def calcular_mediana_por_pregunta(temas):
+def calcular_mediana_por_pregunta(temas, encuestados):
     items = temas.items() # Saca los valores del diccionario
     nuevo_array = []
     for b in items:
         # Ordena las preguntas
-        nuevo = ordenar_preguntas(b[1])
+        nuevo = ordenar_preguntas(b[1], encuestados)
         for n in nuevo:
             # Guarda la pregunta y encuestados
-            nuevo_array.append((n[1], n[2]))
+            nuevo_array.append((n[3], n[4]))
 
     # Itera el arreglo de nuevo_array 
     for i, (pregunta_nombre, op) in enumerate(nuevo_array):
