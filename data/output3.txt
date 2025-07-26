@@ -1,0 +1,26 @@
+Resultados de la encuesta:
+[5.97] Tema 3
+[7.17] Pregunta 3.1: (28, 18, 5, 19, 33, 38)
+[7.00] Pregunta 3.3: (6, 30, 36)
+[3.75] Pregunta 3.2: (37, 21, 14, 11)
+[5.78] Tema 2
+[6.00] Pregunta 2.1: (12, 16, 24, 10)
+[6.00] Pregunta 2.2: (31, 22, 20, 13, 7)
+[5.33] Pregunta 2.3: (26, 40, 9, 4, 17, 32)
+[4.11] Tema 1
+[6.00] Pregunta 1.2: (15, 3, 1, 2, 23)
+[4.00] Pregunta 1.1: (34, 29, 35, 25)
+[2.33] Pregunta 1.3: (27, 39, 8)
+
+Lista de encuestados:
+[28, 12, 3, 34, 25, 18, 7, 40, 31, 27, 17, 10, 2, 39, 30, 22, 15, 6, 38, 29, 23, 13, 5, 37, 24, 14, 1, 32, 21, 16, 4, 33, 26, 19, 11, 35, 20, 8, 36, 9]
+
+Resultados:
+Pregunta con MAYOR promedio: Pregunta 3.1 con promedio = 7.17
+Pregunta con MENOR promedio: Pregunta 1.3 con promedio = 2.33
+Pregunta con MAYOR moda: Pregunta 3.3 con moda = 8
+Pregunta con MENOR moda: Pregunta 1.1 con moda = 0
+Pregunta con Mayor mediana de opinion: [8] Pregunta: 1.2
+Pregunta con Menor mediana de opinion: [1] Pregunta: 1.3
+Pregunta con MAYOR CONSENSO: Pregunta 3.3 con 66.67% de opiniones iguales a la moda
+Pregunta con MAYOR extremismo: Pregunta 1.3 con extremismo = 33.33%

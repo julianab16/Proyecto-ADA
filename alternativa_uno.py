@@ -634,83 +634,23 @@ def pregunta_mayor_extremismo(temas):
         print("No hay preguntas con extremismo.")
 
 
+def construir_arbol_y_recorrer(datos):
+    arbol = ArbolRojoNegro()
+    for d in datos:
+        arbol.insertar(d)
+    
+    lista_encuestados = []
+    arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
+    print(lista_encuestados[::-1])
+    
+    return arbol, lista_encuestados 
+
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
     arbol = ArbolRojoNegro()
     arbol_opiniones = ArbolOpiniones()
-    datos = [
-        {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
-        {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"},
-        {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
-        {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
-        {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"},
-        {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastián Pérez"},
-        {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"},
-        {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
-        {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
-        {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
-        {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
-        {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"}
-    ]
+    datos1 = []
 
-    temas = {
-        
-    "Tema 1": {
-        "Pregunta 1.1": [
-            {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
-            {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"}
-        ],
-        "Pregunta 1.2": [
-            {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
-            {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
-            {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"},
-            {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastian Perez"}
-        ]
-    },
-    "Tema 2": {
-        "Pregunta 2.1": [
-            {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
-            {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
-            {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"}
-        ],
-        "Pregunta 2.2": [
-            {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
-            {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
-            {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"}
-        ]}
-    }
-
-
-    for d in datos:
-        arbol.insertar(d)
-
-    lista_encuestados = []
-    arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
-    print("Lista de encuestados ordenada por experticia descendente y ID:")
-    print(lista_encuestados[::-1])
-    print()
-    print("Lista de Temas ordenada:")
-    temas_ordenados(temas)
-    print()
-    print("Promedios:")
-    pregunta_mayor_menor_promedio(temas)
-    print()
-    print(f"Moda:")
-    pregunta_moda_max_min_arn(temas)
-    print()
-    print("Medianas:")
-    calcular_mediana_por_pregunta(temas)
-    print()
-    print("Consenso:")
-    pregunta_mayor_consenso(temas)
-    print()
-    print("Extremismo:")
-    pregunta_mayor_extremismo(temas)
-
-    
-
-
-    
 
 
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
