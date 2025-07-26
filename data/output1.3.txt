@@ -1,7 +1,7 @@
 Resultados de la encuesta:
 [5.97] Tema 3
- [7.17] Pregunta 3.1: (28, 18, 5, 19, 33, 38)
- [7.00] Pregunta 3.3: (6, 30, 36)
+ [7.17] Pregunta 3.1: (28, 18, 5, 33, 19, 38)
+ [7.00] Pregunta 3.3: (30, 6, 36)
  [3.75] Pregunta 3.2: (37, 21, 14, 11)
 [5.78] Tema 2
  [6.00] Pregunta 2.1: (12, 16, 24, 10)
