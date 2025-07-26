@@ -183,8 +183,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(promedios, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(promedios, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con mayor promedio de opinion: [{mayor[1]:.2f}] {mayor[0]}")
-    print(f"Pregunta con menor promedio de opinion: [{menor[1]:.2f}] {menor[0]}")
+    print(f"Pregunta con mayor promedio de opinion: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con menor promedio de opinion: {menor[0]} con promedio = {menor[1]:.2f}")
 
 
 # funcion moda que calcula la moda de una lista

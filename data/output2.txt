@@ -10,11 +10,10 @@ Resultados de la encuesta:
 [4.67] Pregunta 3.1: (19, 15, 13)
 
 Lista de encuestados:
-[12, 3, 18, 7, 17, 10, 2, 15, 6, 13, 5, 14, 1, 16, 4, 19, 11, 20, 8, 9]
 
 Resultados:
-Pregunta con MAYOR promedio: Pregunta 1.1 con promedio = 7.00
-Pregunta con MENOR promedio: Pregunta 2.2 con promedio = 4.67
+Pregunta con MAYOR promedio de opinion: Pregunta 1.1 con promedio = 7.00
+Pregunta con MENOR promedio de opinion: Pregunta 2.2 con promedio = 4.67
 Pregunta con MAYOR moda: Pregunta 2.1 con moda = 7
 Pregunta con MENOR moda: Pregunta 2.2 con moda = 0
 Pregunta con Mayor mediana de opinion: [7] Pregunta: 2.1

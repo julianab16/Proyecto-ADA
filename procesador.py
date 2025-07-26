@@ -30,7 +30,12 @@ def procesar_archivo_uno(nombre_archivo,salida_archivo):
         nombre = partes[0].strip()
         experticia = int(partes[1].split(':')[1].strip())
         opinion = int(partes[2].split(':')[1].strip())
-        encuestados[i + 1] = (nombre, experticia, opinion)
+        encuestados.append({
+                    "id": i+1,
+                    "experticia": experticia,
+                    "opinion": opinion,
+                    "nombre": nombre
+                })
 
     # Procesar temas
     tema_actual = 1
@@ -38,7 +43,7 @@ def procesar_archivo_uno(nombre_archivo,salida_archivo):
     temas[f"Tema {tema_actual}"] = {}
 
     # Creamos diccionario para acceso rápido por ID
-    #dicc_encuestados = {e["id"]: e for e in encuestados}
+    dicc_encuestados = {e["id"]: e for e in encuestados}
 
     for linea in lineas[linea_division:]:
         linea = linea.strip()
@@ -50,12 +55,21 @@ def procesar_archivo_uno(nombre_archivo,salida_archivo):
         try:
             # Convertir línea como conjunto de índices
             indices = list(map(int, linea.strip("{}").split(",")))
-            temas[f"Tema {tema_actual}"][f"Pregunta {tema_actual}.{pregunta_actual}"] = {
-                encuestados[i] for i in indices
-            }
+
+            # Verifica si hay algún índice que no está en los encuestados
+            indices_invalidos = [i for i in indices if i not in dicc_encuestados]
+            if indices_invalidos:
+                print(f"❌ Índices fuera de rango en la línea: '{linea}' -> índices inválidos: {indices_invalidos} (saltada)")
+                continue
+
+            
+            temas[f"Tema {tema_actual}"][f"Pregunta {tema_actual}.{pregunta_actual}"] = [
+                    dicc_encuestados[i] for i in indices if i in dicc_encuestados
+                ]
+
             pregunta_actual += 1
-        except:
-            print(f"❌ Línea mal formateada: '{linea}' (saltada)")
+        except Exception as e:
+            print(f"❌ Línea mal formateada: '{linea}' (saltada). Error: {e}")
 
     os.makedirs(os.path.dirname(salida_archivo), exist_ok=True)
     original_stdout = sys.stdout
@@ -67,9 +81,8 @@ def procesar_archivo_uno(nombre_archivo,salida_archivo):
         temas_ordenados(temas)
         print()
         print("Lista de encuestados:")
-        #personas = list(encuestados.items())
         print()
-        print("Resultadosssss:")
+        print("Resultados:")
         pregunta_mayor_menor_promedio(temas)
         pregunta_moda_max_min_arn(temas)
         calcular_mediana_por_pregunta(temas)
