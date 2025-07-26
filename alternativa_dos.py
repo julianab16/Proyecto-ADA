@@ -190,8 +190,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(promedios, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(promedios, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con mayor promedio de opinion: [{mayor[1]:.2f}] {mayor[0]}")
-    print(f"Pregunta con menor promedio de opinion: [{menor[1]:.2f}] {menor[0]}")
+    print(f"Pregunta con mayor promedio de opinion: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con menor promedio de opinion: {menor[0]} con promedio = {menor[1]:.2f}")
 
 
 # funcion moda que calcula la moda de una lista
@@ -349,37 +349,3 @@ def pregunta_mayor_extremismo(temas):
         print(f"Pregunta con mayor extremismo: {pregunta_mayor} con {mayor_extremismo*100:.2f}%")
     else:
         print("\nNo hay preguntas con extremismo.")
-
-encuestados = {
-    1: ("Diego Morales", 5, 8),
-    2: ("Laura Jiménez", 8, 6),
-    3: ("Pedro Suárez", 10, 9),
-    4: ("Carolina Rojas", 4, 0),
-    5: ("Andrés Cárdenas", 6, 7),
-    6: ("Marcela Gómez", 7, 8),
-    7: ("Pablo Castillo", 9, 4),
-    8: ("Diana Martínez", 2, 1),
-    9: ("Santiago Reyes", 1, 6),
-    10: ("María Cano", 8, 0),
-    11: ("Ana Mejía", 3, 7),
-    12: ("Luis Vargas", 10, 10),
-    13: ("Verónica López", 6, 1),
-    14: ("Daniela Torres", 5, 4),
-    15: ("Ricardo Pérez", 7, 6),
-    16: ("Jessica Sandoval", 4, 9),
-    17: ("Juan Álvarez", 8, 0),
-    18: ("Felipe Mendoza", 9, 8),
-    19: ("Gloria Ramírez", 3, 7),
-    20: ("Héctor Orozco", 2, 6)
-}
-
-personas = list(encuestados.items())
-
-
-"""
-Dado que los valores de cada encuestado son una tupla,
-se puede acceder a ellos como encuestados[1][0] para el nombre, 
-encuestados[1][1] para la experticia y encuestados[1][2] para la opinión.
-
-Si vas a camnbiar algo en el código, asegúrate de comentarlo y escribir por el grupo.
-"""

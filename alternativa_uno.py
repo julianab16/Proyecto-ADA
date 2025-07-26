@@ -238,13 +238,13 @@ class ArbolOpinionExperticia(ArbolRojoNegro):
         y = None
         x = self.raiz
         # Inserta el nodo en el árbol siguiendo el orden por opinión descendente,
-        # luego por experticia descendente, y finalmente por ID ascendente en caso de empate
+        # luego por experticia descendente, y finalmente por ID 
         while x != self.NIL:
             y = x
             if (
                 nodo.opinion > x.opinion or
                 (nodo.opinion == x.opinion and nodo.experticia > x.experticia) or
-                (nodo.opinion == x.opinion and nodo.experticia == x.experticia and nodo.id < x.id)
+                (nodo.opinion == x.opinion and nodo.experticia == x.experticia and nodo.id > x.id)
             ):
                 x = x.izq
             else:
@@ -256,7 +256,7 @@ class ArbolOpinionExperticia(ArbolRojoNegro):
         elif (
             nodo.opinion > y.opinion or
             (nodo.opinion == y.opinion and nodo.experticia > y.experticia) or
-            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id < y.id)
+            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id > y.id)
         ):
             y.izq = nodo
         else:
@@ -461,8 +461,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(resultados, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(resultados, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con MAYOR promedio: {mayor[0]} con promedio = {mayor[1]:.2f}")
-    print(f"Pregunta con MENOR promedio: {menor[0]} con promedio = {menor[1]:.2f}")
+    print(f"Pregunta con MAYOR promedio de opinion: {mayor[0]} con promedio = {mayor[1]:.2f}")
+    print(f"Pregunta con MENOR promedio de opinion: {menor[0]} con promedio = {menor[1]:.2f}")
 
 
 # Calcula la moda de una lista, devolviendo la menor si hay empate
@@ -633,30 +633,128 @@ def pregunta_mayor_extremismo(temas):
     else:
         print("No hay preguntas con extremismo.")
 
+class NodoEncuestado:
+    def __init__(self, id, experticia, opinion, nombre):
+        self.id = id
+        self.experticia = experticia
+        self.opinion = opinion
+        self.nombre = nombre
+        self.color = 'R'  # opcional si luego balanceas
+        self.izq = None
+        self.der = None
+        self.padre = None
 
-def construir_arbol_y_recorrer(datos):
-    arbol = ArbolRojoNegro()
-    for d in datos:
-        arbol.insertar(d)
-    
-    lista_encuestados = []
-    arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
-    print(lista_encuestados[::-1])
-    
-    return arbol, lista_encuestados 
+class ArbolEncuestado:
+    def __init__(self):
+        self.raiz = None
+
+    def insertar(self, nodo):
+        y = None
+        x = self.raiz
+        while x:
+            y = x
+            if (nodo.experticia > x.experticia or
+                (nodo.experticia == x.experticia and nodo.id > x.id)):
+                x = x.izq
+            else:
+                x = x.der
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+        elif (nodo.experticia > y.experticia or
+              (nodo.experticia == y.experticia and nodo.id > y.id)):
+            y.izq = nodo
+        else:
+            y.der = nodo
+
+    def inorden(self, nodo, resultado):
+        if nodo:
+            self.inorden(nodo.izq, resultado)
+            resultado.append(nodo)
+            self.inorden(nodo.der, resultado)
+
+def construir_arbol_y_recorrer(encuestados):
+    arbol = ArbolEncuestado()
+    for e in encuestados:
+        nodo = NodoEncuestado(e["id"], e["experticia"], e["opinion"], e["nombre"])
+        arbol.insertar(nodo)
+
+    resultado = []
+    arbol.inorden(arbol.raiz, resultado)
+
+    #print("{" + ", ".join(str(e.id) for e in resultado) + "}")
+    return resultado  # lista ordenada por nombre
+
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
     arbol = ArbolRojoNegro()
     arbol_opiniones = ArbolOpiniones()
-    datos1 = []
+    datos = [
+        {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
+        {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"},
+        {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
+        {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
+        {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"},
+        {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastián Pérez"},
+        {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"},
+        {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
+        {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
+        {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
+        {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
+        {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"}
+    ]
+
+    temas = {
+        
+    "Tema 1": {
+        "Pregunta 1.1": [
+            {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
+            {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"}
+        ],
+        "Pregunta 1.2": [
+            {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
+            {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
+            {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"},
+            {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastian Perez"}
+        ]
+    },
+    "Tema 2": {
+        "Pregunta 2.1": [
+            {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
+            {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
+            {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"}
+        ],
+        "Pregunta 2.2": [
+            {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
+            {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
+            {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"}
+        ]}
+    }
 
 
+    for d in datos:
+        arbol.insertar(d)
 
-# Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
-# manejando actualización de datos de encuestados 
-
-# Idea: Yo creo que podríamos hacer funciones auxiliares para calcular la mediana, moda, promedio, 
-# extremismo y consenso recorriendo el árbol, extrayendo todas las opiniones en una lista 
-# temporal y procesándola. Si hacemos funciones auxiliares no habria que cambiar ninguna estructura
-# sino agregar al codigo y tomar la estructura del arbol
+    lista_encuestados = []
+    arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
+    print("Lista de encuestados ordenada por experticia descendente y ID:")
+    print(lista_encuestados[::-1])
+    print()
+    print("Lista de Temas ordenada:")
+    temas_ordenados(temas)
+    print()
+    print("Promedios:")
+    pregunta_mayor_menor_promedio(temas)
+    print()
+    print(f"Moda:")
+    pregunta_moda_max_min_arn(temas)
+    print()
+    print("Medianas:")
+    calcular_mediana_por_pregunta(temas)
+    print()
+    print("Consenso:")
+    pregunta_mayor_consenso(temas)
+    print()
+    print("Extremismo:")
+    pregunta_mayor_extremismo(temas)

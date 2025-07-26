@@ -55,8 +55,8 @@ Lista de encuestados:
 (9, Nombre: Santiago Reyes, Experticia: 1, Opinión: 6)
 
 Resultados:
-Pregunta con mayor promedio de opinion: [7.17] Pregunta 3.1
-Pregunta con menor promedio de opinion: [2.33] Pregunta 1.3
+Pregunta con mayor promedio de opinion: Pregunta 3.1 con promedio = 7.17
+Pregunta con menor promedio de opinion: Pregunta 1.3 con promedio = 2.33
 Pregunta con mayor mediana de opinion: [8] Pregunta: 3.3
 Pregunta con menor mediana de opinion: [1] Pregunta: 1.3
 Pregunta con mayor moda de opinion: [8] Pregunta 3.3

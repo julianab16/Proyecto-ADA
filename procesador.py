@@ -82,7 +82,9 @@ def procesar_archivo_uno(nombre_archivo,salida_archivo):
         temas_ordenados(temas)
         print()
         print("Lista de encuestados:")
-        construir_arbol_y_recorrer(encuestados)
+        encuestados_ordenados = construir_arbol_y_recorrer(encuestados)
+        for e in encuestados_ordenados:
+            print(f"({e.id}, Nombre: {e.nombre}, Experticia: {e.experticia}, Opinión: {e.opinion})")
         print()
         print("Resultados:")
         pregunta_mayor_menor_promedio(temas)
