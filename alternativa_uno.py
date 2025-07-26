@@ -633,6 +633,58 @@ def pregunta_mayor_extremismo(temas):
     else:
         print("No hay preguntas con extremismo.")
 
+class NodoEncuestado:
+    def __init__(self, id, experticia, opinion, nombre):
+        self.id = id
+        self.experticia = experticia
+        self.opinion = opinion
+        self.nombre = nombre
+        self.color = 'R'  # opcional si luego balanceas
+        self.izq = None
+        self.der = None
+        self.padre = None
+
+class ArbolEncuestado:
+    def __init__(self):
+        self.raiz = None
+
+    def insertar(self, nodo):
+        y = None
+        x = self.raiz
+        while x:
+            y = x
+            if (nodo.experticia > x.experticia or
+                (nodo.experticia == x.experticia and nodo.id > x.id)):
+                x = x.izq
+            else:
+                x = x.der
+        nodo.padre = y
+        if y is None:
+            self.raiz = nodo
+        elif (nodo.experticia > y.experticia or
+              (nodo.experticia == y.experticia and nodo.id > y.id)):
+            y.izq = nodo
+        else:
+            y.der = nodo
+
+    def inorden(self, nodo, resultado):
+        if nodo:
+            self.inorden(nodo.izq, resultado)
+            resultado.append(nodo)
+            self.inorden(nodo.der, resultado)
+
+def construir_arbol_y_recorrer(encuestados):
+    arbol = ArbolEncuestado()
+    for e in encuestados:
+        nodo = NodoEncuestado(e["id"], e["experticia"], e["opinion"], e["nombre"])
+        arbol.insertar(nodo)
+
+    resultado = []
+    arbol.inorden(arbol.raiz, resultado)
+
+    #print("{" + ", ".join(str(e.id) for e in resultado) + "}")
+    return resultado  # lista ordenada por nombre
+
 
 if __name__ == "__main__":
     # Datos de ejemplo con encuestados
