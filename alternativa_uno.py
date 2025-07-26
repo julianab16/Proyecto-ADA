@@ -261,7 +261,7 @@ class ArbolOpinionExperticia(ArbolRojoNegro):
         elif (
             nodo.opinion > y.opinion or
             (nodo.opinion == y.opinion and nodo.experticia > y.experticia) or
-            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id > y.id)
+            (nodo.opinion == y.opinion and nodo.experticia == y.experticia and nodo.id < y.id)
         ):
             y.izq = nodo
         else:
@@ -447,7 +447,7 @@ def temas_ordenados(temas):
         # Recorre el árbol de preguntas del tema y obtiene los nodos ordenados
         tema.arbol_preguntas.recorrido(tema.arbol_preguntas.raiz, preguntas_ordenadas)
         for pregunta in preguntas_ordenadas:
-            print(f"[{pregunta.promedio_opinion:.2f}] {pregunta.pregunta_id}: {tuple(pregunta.encuestados)}")
+            print(f" [{pregunta.promedio_opinion:.2f}] {pregunta.pregunta_id}: {tuple(pregunta.encuestados)}")
 
 # Función para la pregunta con mayor y menor promedio
 def pregunta_mayor_menor_promedio(temas):
@@ -466,8 +466,8 @@ def pregunta_mayor_menor_promedio(temas):
     mayor = max(resultados, key=lambda x: (x[1], -ord(x[0][0])))
     menor = min(resultados, key=lambda x: (x[1], x[0]))
 
-    print(f"Pregunta con mayor promedio de opinion: {mayor[1]:.2f} Pregunta: {mayor[0]}")
-    print(f"Pregunta con menor promedio de opinion: {menor[1]:.2f} Pregunta: {menor[0]}")
+    print(f"Pregunta con mayor promedio de opinion: [{mayor[1]:.2f}] Pregunta: {mayor[0][9:]}")
+    print(f"Pregunta con menor promedio de opinion: [{menor[1]:.2f}] Pregunta: {menor[0][9:]}")
 
 
 # Calcula la moda de una lista, devolviendo la menor si hay empate
@@ -538,8 +538,9 @@ def pregunta_moda_max_min_arn(temas):
         elif r[1] == menor[1] and r[0] < menor[0]:  # menor ID si empate
             menor = r
 
-    print(f"Pregunta con mayor moda de opinion: {mayor[1]} Pregunta: {mayor[0]}")
-    print(f"Pregunta con menor moda de opinion: {menor[1]} Pregunta: {menor[0]}")
+    print(f"Pregunta con mayor moda de opinion: [{mayor[1]}] Pregunta: {mayor[0][9:]}")
+    print(f"Pregunta con menor moda de opinion: [{menor[1]}] Pregunta: {menor[0][9:]}")
+
     
 def pregunta_mayor_consenso(temas):
  # Inicializamos variables para guardar la mejor pregunta y el mayor porcentaje de consenso encontrado   
@@ -569,9 +570,8 @@ def pregunta_mayor_consenso(temas):
                 mejor_consenso = consenso
                 mejor_pregunta = pregunta_id
     
-    # Imprimimos la pregunta con mayor consenso y su porcentaje (redondeado)
-    porcentaje = round(mejor_consenso * 100, 2)
-    print(f"Pregunta con mayor consenso: {mejor_pregunta} con {porcentaje}%")
+    print(f"Pregunta con mayor consenso: [{mejor_consenso:.2f}] Pregunta: {mejor_pregunta[9:]}")
+
    
 # Funcion para calcular la mediana
 def calcular_mediana(lista):
@@ -634,7 +634,8 @@ def pregunta_mayor_extremismo(temas):
                 pregunta_mayor = pregunta_id
     # Imprime el resultado si se encontró alguna pregunta con encuestados
     if pregunta_mayor is not None:
-        print(f"Pregunta con mayor extremismo: {pregunta_mayor} con {mayor_extremismo}")
+        print(f"Pregunta con mayor extremismo: [{mayor_extremismo:.2f}] Pregunta: {pregunta_mayor[9:]}")
+
     else:
         print("No hay preguntas con extremismo.")
 
@@ -687,91 +688,14 @@ def construir_arbol_y_recorrer(encuestados):
     resultado = []
     arbol.inorden(arbol.raiz, resultado)
 
-    #print("{" + ", ".join(str(e.id) for e in resultado) + "}")
     return resultado  # lista ordenada por nombre
 
-
-# if __name__ == "__main__":
-#     # Datos de ejemplo con encuestados
-#     arbol = ArbolRojoNegro()
-#     arbol_opiniones = ArbolOpiniones()
-#     datos = [
-#         {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
-#         {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"},
-#         {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
-#         {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
-#         {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"},
-#         {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastián Pérez"},
-#         {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"},
-#         {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
-#         {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
-#         {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
-#         {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
-#         {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"}
-#     ]
-
-#     temas = {
-        
-#     "Tema 1": {
-#         "Pregunta 1.1": [
-#             {"id": 10, "experticia": 2, "opinion": 9, "nombre": "Daniel Ruiz"},
-#             {"id": 2, "experticia": 7, "opinion": 10, "nombre": "Alejandro Torres"}
-#         ],
-#         "Pregunta 1.2": [
-#             {"id": 1, "experticia": 1, "opinion": 6, "nombre": "Sofia García"},
-#             {"id": 9, "experticia": 7, "opinion": 5, "nombre": "Isabella Díaz"},
-#             {"id": 12, "experticia": 6, "opinion": 8, "nombre": "Lucas Vásquez"},
-#             {"id": 6, "experticia": 8, "opinion": 9, "nombre": "Sebastian Perez"}
-#         ]
-#     },
-#     "Tema 2": {
-#         "Pregunta 2.1": [
-#             {"id": 11, "experticia": 1, "opinion": 7, "nombre": "Luciana Sánchez"},
-#             {"id": 8, "experticia": 4, "opinion": 7, "nombre": "Mateo González"},
-#             {"id": 7, "experticia": 2, "opinion": 7, "nombre": "Camila Fernández"}
-#         ],
-#         "Pregunta 2.2": [
-#             {"id": 3, "experticia": 9, "opinion": 0, "nombre": "Valentina Rodriguez"},
-#             {"id": 4, "experticia": 10, "opinion": 1, "nombre": "Juan López"},
-#             {"id": 5, "experticia": 7, "opinion": 0, "nombre": "Martina Martinez"}
-#         ]}
-#     }
-
-
-#     for d in datos:
-#         arbol.insertar(d)
-
-#     lista_encuestados = []
-#     arbol.recorrido_inorden(arbol.raiz, lista_encuestados)
-#     print("Lista de encuestados ordenada por experticia descendente y ID:")
-#     print(lista_encuestados[::-1])
-#     print()
-#     print("Lista de Temas ordenada:")
-#     temas_ordenados(temas)
-#     print()
-#     print("Promedios:")
-#     pregunta_mayor_menor_promedio(temas)
-#     print()
-#     print(f"Moda:")
-#     pregunta_moda_max_min_arn(temas)
-#     print()
-#     print("Medianas:")
-#     calcular_mediana_por_pregunta(temas)
-#     print()
-#     print("Consenso:")
-#     pregunta_mayor_consenso(temas)
-#     print()
-#     print("Extremismo:")
-#     pregunta_mayor_extremismo(temas)
-
-
+"""
 def generar_datos(potencia):
-    """
     Genera temas y preguntas según la potencia de dos.
     - Número de temas = 2**potencia
     - Número de preguntas por tema: aleatorio entre 2 y 10
     - Cada pregunta tiene entre 2 y 10 encuestados únicos (no se repiten entre preguntas)
-    """
     num_temas = 2**potencia
     temas = {}
     preguntas_total = 0
@@ -840,7 +764,7 @@ plt.ylabel('Tiempo de ejecución (segundos)')
 plt.title('Tamaño de entrada vs Tiempo de ejecución')
 plt.grid(True)
 plt.show()
-
+"""
 # Comentario general: Se puede mejorar el código integrando validaciones para datos duplicados, 
 # manejando actualización de datos de encuestados 
 
