@@ -1,3 +1,6 @@
+import time
+import matplotlib.pyplot as plt
+import random
 
 # Function to merge and sort encuestados based on Experticia and ID
 def merge_encuestados(lista):
@@ -345,54 +348,55 @@ def pregunta_mayor_extremismo(temas):
     else:
         print("\nNo hay preguntas con extremismo.")
 
+# Experticia, opinion
 
-encuestados = {
-    1: ("Sofia García", 1, 6),
-    2: ("Alejandro Torres", 7, 10),
-    3: ("Valentina Rodriguez", 9, 0),
-    4: ("Juan Lopéz", 10, 1),
-    5: ("Martina Martinez", 7, 0),
-    6: ("Sebastian Perez", 8, 9),
-    7: ("Camila Fernandez", 2, 7),
-    8: ("Mateo Gonzalez", 4, 7),
-    9: ("Isabella Díaz", 7, 5),
-    10: ("Daniel Ruiz", 2, 9),
-    11: ("Luciana Sanchez", 1, 7),
-    12: ("Lucas Vasquez", 6, 8)
-}
+# encuestados = {
+#     1: ("Sofia García", 1, 6),
+#     2: ("Alejandro Torres", 7, 10),
+#     3: ("Valentina Rodriguez", 9, 0),
+#     4: ("Juan Lopéz", 10, 1),
+#     5: ("Martina Martinez", 7, 0),
+#     6: ("Sebastian Perez", 8, 9),
+#     7: ("Camila Fernandez", 2, 7),
+#     8: ("Mateo Gonzalez", 4, 7),
+#     9: ("Isabella Díaz", 7, 5),
+#     10: ("Daniel Ruiz", 2, 9),
+#     11: ("Luciana Sanchez", 1, 7),
+#     12: ("Lucas Vasquez", 6, 8)
+# }
 
-tema_1 = {
-    "Pregunta 1.1": {encuestados[10], encuestados[2]},
-    "Pregunta 1.2": {encuestados[1], encuestados[9], encuestados[12], encuestados[6]}}
-tema_2 = {
-    "Pregunta 2.1": {encuestados[11], encuestados[8], encuestados[7]},
-    "Pregunta 2.2": {encuestados[3], encuestados[4], encuestados[5]}}
+# tema_1 = {
+#     "Pregunta 1.1": {encuestados[10], encuestados[2]},
+#     "Pregunta 1.2": {encuestados[1], encuestados[9], encuestados[12], encuestados[6]}}
+# tema_2 = {
+#     "Pregunta 2.1": {encuestados[11], encuestados[8], encuestados[7]},
+#     "Pregunta 2.2": {encuestados[3], encuestados[4], encuestados[5]}}
 
-temas = {
-    "Tema 1": tema_1,
-    "Tema 2": tema_2}
+# temas = {
+#     "Tema 1": tema_1,
+#     "Tema 2": tema_2}
 
-personas = list(encuestados.items())
-print("Lista de encuestados ordenada")
-ordenar_encuestados(personas)
-print()
-print("Lista de Temas ordenada")
-ordenar_temas(temas, personas)
-print()
-print("Promedio:")
-pregunta_mayor_menor_promedio(temas)
-print()
-print("Moda:")
-pregunta_moda_max_min(temas)
-print()
-print("Mediana:")
-calcular_mediana_por_pregunta(temas)
-print()
-print("Consenso:")
-pregunta_mayor_consenso(temas)
-print()
-print("Extremismo:")
-pregunta_mayor_extremismo(temas)
+# personas = list(encuestados.items())
+# print("Lista de encuestados ordenada")
+# ordenar_encuestados(personas)
+# print()
+# print("Lista de Temas ordenada")
+# ordenar_temas(temas, personas)
+# print()
+# print("Promedio:")
+# pregunta_mayor_menor_promedio(temas)
+# print()
+# print("Moda:")
+# pregunta_moda_max_min(temas)
+# print()
+# print("Mediana:")
+# calcular_mediana_por_pregunta(temas)
+# print()
+# print("Consenso:")
+# pregunta_mayor_consenso(temas)
+# print()
+# print("Extremismo:")
+# pregunta_mayor_extremismo(temas)
 
 """
 Dado que los valores de cada encuestado son una tupla,
@@ -401,3 +405,131 @@ encuestados[1][1] para la experticia y encuestados[1][2] para la opinión.
 
 Si vas a camnbiar algo en el código, asegúrate de comentarlo y escribir por el grupo.
 """
+
+import random
+
+# def generar_datos(potencia):
+#     """
+#     Genera temas y preguntas según la potencia de dos.
+#     - Número de temas = 2**potencia
+#     - Número de preguntas por tema: aleatorio entre 2 y 10
+#     - Encuesados únicos asignados aleatoriamente a preguntas (no se repiten)
+#     """
+#     num_temas = 2**potencia
+#     temas = {}
+#     preguntas_total = 0
+#     preguntas_por_tema = []
+#     # Primero decide cuántas preguntas tendrá cada tema
+#     for _ in range(num_temas):
+#         n_preg = random.randint(2, 10)
+#         preguntas_por_tema.append(n_preg)
+#         preguntas_total += n_preg
+
+#     # Genera encuestados únicos (uno por pregunta)
+#     encuestados = {}
+#     for i in range(1, preguntas_total * 10):  # Suficientes para asignar varios por pregunta
+#         nombre = f"Persona_{i}"
+#         experticia = random.randint(1, 10)
+#         opinion = random.randint(0, 10)
+#         encuestados[i] = (nombre, experticia, opinion)
+
+#     encuestados_disponibles = list(encuestados.values())
+#     random.shuffle(encuestados_disponibles)
+#     idx = 0
+
+#     for tema_idx in range(num_temas):
+#         tema_nombre = f"Tema_{tema_idx+1}"
+#         temas[tema_nombre] = {}
+#         for preg_idx in range(preguntas_por_tema[tema_idx]):
+#             pregunta_nombre = f"Pregunta_{preg_idx+1}"
+#             cantidad = random.randint(1, min(10, len(encuestados_disponibles)))
+#             asignados = set(encuestados_disponibles[:cantidad])
+#             temas[tema_nombre][pregunta_nombre] = asignados
+#             encuestados_disponibles = encuestados_disponibles[cantidad:]
+#             if not encuestados_disponibles:
+#                 break
+#         if not encuestados_disponibles:
+#             break
+
+#     personas = list(encuestados.items())
+#     return temas, personas
+
+def generar_datos(potencia):
+    """
+    Genera temas y preguntas según la potencia de dos.
+    - Número de temas = 2**potencia
+    - Número de preguntas por tema: aleatorio entre 2 y 10
+    - Cada pregunta tiene entre 2 y 10 encuestados únicos (no se repiten entre preguntas)
+    """
+    num_temas = 2**potencia
+    temas = {}
+    preguntas_total = 0
+    preguntas_por_tema = []
+    # Decide cuántas preguntas tendrá cada tema
+    for _ in range(num_temas):
+        n_preg = random.randint(2, 10)
+        preguntas_por_tema.append(n_preg)
+        preguntas_total += n_preg
+
+    # Genera suficientes encuestados únicos
+    encuestados = {}
+    for i in range(1, preguntas_total * 10):
+        nombre = f"Persona_{i}"
+        experticia = random.randint(1, 10)
+        opinion = random.randint(0, 10)
+        encuestados[i] = (nombre, experticia, opinion)
+
+    encuestados_disponibles = list(encuestados.values())
+    random.shuffle(encuestados_disponibles)
+
+    for tema_idx in range(num_temas):
+        tema_nombre = f"Tema_{tema_idx+1}"
+        temas[tema_nombre] = {}
+        for preg_idx in range(preguntas_por_tema[tema_idx]):
+            pregunta_nombre = f"Pregunta_{preg_idx+1}"
+            # Garantiza mínimo 2 y máximo 10 encuestados por pregunta
+            max_cantidad = min(10, len(encuestados_disponibles))
+            if max_cantidad < 2:
+                break  # No hay suficientes encuestados para esta pregunta
+            cantidad = random.randint(2, max_cantidad)
+            asignados = set(encuestados_disponibles[:cantidad])
+            temas[tema_nombre][pregunta_nombre] = asignados
+            encuestados_disponibles = encuestados_disponibles[cantidad:]
+            if len(encuestados_disponibles) < 2:
+                break
+        if len(encuestados_disponibles) < 2:
+            break
+
+    personas = list(encuestados.items())
+    return temas, personas
+
+
+potencias = [6, 8, 10, 12]
+
+
+def measure_time(func, *args, **kwargs):
+    start = time.time()
+    func(*args, **kwargs)
+    end = time.time()
+    return end - start
+
+tiempos = []
+for p in potencias:
+    temas, personas = generar_datos(p)
+    # ordenar_temas(temas, personas)
+    tiempos.append(measure_time(ordenar_temas, temas, personas))
+    print(f"Tiempo para 2^{p}: {tiempos[-1]:.6f} segundos")
+
+print("Tiempos de ejecución para diferentes tamaños de encuestados:")
+for p, t in zip(potencias, tiempos):
+    print(f"2^{p}: {t:.6f} segundos")
+
+sizes = [2**p for p in potencias]
+
+plt.figure(figsize=(8,5))
+plt.plot(sizes, tiempos, marker='o')
+plt.xlabel('Tamaño de entrada (número de encuestados)')
+plt.ylabel('Tiempo de ejecución (segundos)')
+plt.title('Tamaño de entrada vs Tiempo de ejecución')
+plt.grid(True)
+plt.show()
